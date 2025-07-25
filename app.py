@@ -13,7 +13,11 @@ app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-prod
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # Configure the database
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///lms.db")
+database_url = os.environ.get("DATABASE_URL", "sqlite:///lms.db")
+# For Vercel, use PostgreSQL if available, otherwise fallback to SQLite
+if not database_url.startswith(('postgresql://', 'postgres://')):
+    database_url = "sqlite:///lms.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,
@@ -74,13 +78,15 @@ def create_sample_data():
             db.session.add(course)
         db.session.commit()
 
-with app.app_context():
-    # Import models to ensure tables are created
-    import models
-    db.create_all()
-    
-    # Create sample data
-    create_sample_data()
+def init_db():
+    """Initialize database and create sample data"""
+    with app.app_context():
+        import models
+        db.create_all()
+        create_sample_data()
+
+# Initialize database on first import
+init_db()
 
 # Import and register routes
 from routes import *
