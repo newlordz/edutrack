@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, url_for, flash, session
-from app import app, db
+from app import app
+from database import db
 from models import User, Course, Enrollment, Grade
 from datetime import datetime
 import random

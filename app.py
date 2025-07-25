@@ -1,17 +1,11 @@
 import os
 import logging
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
+from database import db
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
-
-class Base(DeclarativeBase):
-    pass
-
-db = SQLAlchemy(model_class=Base)
 
 # Create the app
 app = Flask(__name__)
@@ -28,12 +22,10 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 # Initialize the app with the extension
 db.init_app(app)
 
-with app.app_context():
-    # Import models to ensure tables are created
+def create_sample_data():
+    """Create sample courses if database is empty"""
     import models
-    db.create_all()
     
-    # Create sample courses if none exist
     if models.Course.query.count() == 0:
         sample_courses = [
             models.Course(
@@ -81,6 +73,14 @@ with app.app_context():
         for course in sample_courses:
             db.session.add(course)
         db.session.commit()
+
+with app.app_context():
+    # Import models to ensure tables are created
+    import models
+    db.create_all()
+    
+    # Create sample data
+    create_sample_data()
 
 # Import and register routes
 from routes import *
