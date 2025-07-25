@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Courses - EduLearn{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold">
+                <i class="fas fa-book text-primary me-3"></i>Course Catalog
+            </h1>
+            <p class="lead text-muted">Discover and enroll in courses that match your interests and career goals.</p>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-6">
+                    <label for="search" class="form-label">Search Courses</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control" id="search" name="search" 
+                               placeholder="Search by title or description..." value="{{ current_search }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label for="difficulty" class="form-label">Difficulty Level</label>
+                    <select class="form-select" id="difficulty" name="difficulty">
+                        <option value="">All Levels</option>
+                        {% for diff in difficulties %}
+                        <option value="{{ diff }}" {% if current_difficulty == diff %}selected{% endif %}>
+                            {{ diff }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter me-1"></i>Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Course Results -->
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="mb-0">{{ courses|length }} course{{ 's' if courses|length != 1 else '' }} found</h5>
+                {% if current_search or current_difficulty %}
+                <a href="{{ url_for('courses') }}" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-times me-1"></i>Clear Filters
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if courses %}
+    <div class="row g-4">
+        {% for course in courses %}
+        <div class="col-lg-6 col-xl-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="badge bg-{{ 'success' if course.difficulty == 'Beginner' else 'warning' if course.difficulty == 'Intermediate' else 'danger' }}">
+                            {{ course.difficulty }}
+                        </span>
+                        <div class="text-end">
+                            <small class="text-muted d-block">
+                                <i class="fas fa-clock me-1"></i>{{ course.duration_weeks }} weeks
+                            </small>
+                            <small class="text-muted">
+                                <i class="fas fa-users me-1"></i>{{ course.get_enrolled_count() }}/{{ course.max_students }}
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <h5 class="card-title mb-3">{{ course.title }}</h5>
+                    <p class="card-text text-muted mb-3">{{ course.description[:120] }}...</p>
+                    
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-chalkboard-teacher me-1"></i>{{ course.instructor }}
+                        </small>
+                    </div>
+                    
+                    <!-- Enrollment Status -->
+                    <div class="mb-3">
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: {{ (course.get_enrolled_count() / course.max_students * 100) }}%"></div>
+                        </div>
+                        <small class="text-muted">
+                            {% if course.is_full() %}
+                                <span class="text-danger">Course Full</span>
+                            {% else %}
+                                {{ course.max_students - course.get_enrolled_count() }} spots available
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-transparent border-0">
+                    <a href="{{ url_for('course_detail', course_id=course.id) }}" class="btn btn-primary w-100">
+                        <i class="fas fa-info-circle me-2"></i>View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-search text-muted" style="font-size: 4rem;"></i>
+        <h4 class="mt-4 text-muted">No courses found</h4>
+        <p class="text-muted">Try adjusting your search criteria or browse all available courses.</p>
+        <a href="{{ url_for('courses') }}" class="btn btn-primary">
+            <i class="fas fa-refresh me-2"></i>Show All Courses
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

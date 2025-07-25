@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.title }} - EduLearn{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Course Header -->
+    <div class="row mb-5">
+        <div class="col-lg-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('courses') }}">Courses</a></li>
+                    <li class="breadcrumb-item active">{{ course.title }}</li>
+                </ol>
+            </nav>
+            
+            <h1 class="display-5 fw-bold mb-3">{{ course.title }}</h1>
+            
+            <div class="d-flex flex-wrap gap-3 mb-4">
+                <span class="badge bg-{{ 'success' if course.difficulty == 'Beginner' else 'warning' if course.difficulty == 'Intermediate' else 'danger' }} fs-6">
+                    {{ course.difficulty }}
+                </span>
+                <span class="text-muted">
+                    <i class="fas fa-clock me-1"></i>{{ course.duration_weeks }} weeks
+                </span>
+                <span class="text-muted">
+                    <i class="fas fa-users me-1"></i>{{ course.get_enrolled_count() }}/{{ course.max_students }} students
+                </span>
+                <span class="text-muted">
+                    <i class="fas fa-chalkboard-teacher me-1"></i>{{ course.instructor }}
+                </span>
+            </div>
+            
+            <p class="lead">{{ course.description }}</p>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm sticky-top" style="top: 2rem;">
+                <div class="card-body">
+                    {% if session.user_id %}
+                        {% if enrolled %}
+                            <div class="text-center mb-4">
+                                <i class="fas fa-check-circle text-success" style="font-size: 3rem;"></i>
+                                <h5 class="mt-2 text-success">You're Enrolled!</h5>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Your Progress</span>
+                                    <span class="text-muted">{{ "%.0f"|format(progress) }}%</span>
+                                </div>
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ progress }}%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                                </a>
+                                <a href="{{ url_for('grades') }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-chart-line me-2"></i>View Grades
+                                </a>
+                            </div>
+                        {% else %}
+                            {% if course.is_full() %}
+                                <div class="text-center mb-4">
+                                    <i class="fas fa-users text-danger" style="font-size: 3rem;"></i>
+                                    <h5 class="mt-2 text-danger">Course Full</h5>
+                                    <p class="text-muted">This course has reached its maximum capacity.</p>
+                                </div>
+                            {% else %}
+                                <div class="text-center mb-4">
+                                    <h5>Ready to Start Learning?</h5>
+                                    <p class="text-muted">Join {{ course.get_enrolled_count() }} other students in this course.</p>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar" role="progressbar" 
+                                             style="width: {{ (course.get_enrolled_count() / course.max_students * 100) }}%"></div>
+                                    </div>
+                                    <small class="text-muted">
+                                        {{ course.max_students - course.get_enrolled_count() }} spots remaining
+                                    </small>
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <a href="{{ url_for('enroll', course_id=course.id) }}" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-plus me-2"></i>Enroll Now
+                                    </a>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center mb-4">
+                            <i class="fas fa-sign-in-alt text-primary" style="font-size: 3rem;"></i>
+                            <h5 class="mt-2">Login to Enroll</h5>
+                            <p class="text-muted">Create an account or sign in to enroll in this course.</p>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('login') }}" class="btn btn-primary">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login
+                            </a>
+                            <a href="{{ url_for('register') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Details -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Course Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-2">Instructor</h6>
+                            <p class="mb-0">{{ course.instructor }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-2">Duration</h6>
+                            <p class="mb-0">{{ course.duration_weeks }} weeks</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-2">Difficulty Level</h6>
+                            <span class="badge bg-{{ 'success' if course.difficulty == 'Beginner' else 'warning' if course.difficulty == 'Intermediate' else 'danger' }}">
+                                {{ course.difficulty }}
+                            </span>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-2">Class Size</h6>
+                            <p class="mb-0">{{ course.get_enrolled_count() }} / {{ course.max_students }} students</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>What You'll Learn
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% set learning_points = [
+                            "Understand core concepts and fundamentals",
+                            "Apply knowledge through hands-on exercises",
+                            "Work on real-world projects and examples",
+                            "Develop practical skills for career advancement",
+                            "Build a portfolio of completed work",
+                            "Connect with fellow students and instructors"
+                        ] %}
+                        {% for point in learning_points %}
+                        <div class="col-md-6 mb-2">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                                <span>{{ point }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users me-2"></i>Student Reviews
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-4">
+                        <i class="fas fa-star text-warning" style="font-size: 2rem;"></i>
+                        <h6 class="mt-2 text-muted">Student reviews coming soon!</h6>
+                        <p class="text-muted mb-0">Be among the first to review this course after enrolling.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Course Stats
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6 border-end">
+                            <h4 class="text-primary mb-1">{{ course.get_enrolled_count() }}</h4>
+                            <small class="text-muted">Students</small>
+                        </div>
+                        <div class="col-6">
+                            <h4 class="text-success mb-1">{{ "%.1f"|format(course.get_average_grade()) }}</h4>
+                            <small class="text-muted">Avg Grade</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>Prerequisites
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if course.difficulty == 'Beginner' %}
+                    <p class="text-muted">No prior experience required. Perfect for beginners!</p>
+                    {% elif course.difficulty == 'Intermediate' %}
+                    <p class="text-muted">Basic understanding of the subject area recommended.</p>
+                    {% else %}
+                    <p class="text-muted">Strong foundation in related topics and prior experience required.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
