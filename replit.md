@@ -67,8 +67,8 @@ The application follows a traditional Flask web application architecture with th
 - **Custom CSS**: Application-specific styling and animations
 
 ### Database
-- **SQLite**: Default database for development and simple deployments
-- **PostgreSQL**: Production database option via DATABASE_URL environment variable
+- **PostgreSQL**: Production database connected and configured via DATABASE_URL environment variable
+- **Database Tables**: Users, Courses, Enrollments, Grades with proper relationships and constraints
 
 ## Deployment Strategy
 
