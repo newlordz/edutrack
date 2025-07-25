@@ -1,0 +1,44 @@
+PS C:\Users\enoch\Downloads\Compressed\EduTrack\EduTrack> & C:\Users\enoch\AppData\Local\Programs\Python\Python313\python.exe c:/Users/enoch/Downloads/Compressed/EduTrack/EduTrack/app.py
+Traceback (most recent call last):
+  File "c:\Users\enoch\Downloads\Compressed\EduTrack\EduTrack\app.py", line 37, in <module>
+    if models.Course.query.count() == 0:
+       ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\enoch\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\query.py", line 3146, in count
+    self._legacy_from_self(col).enable_eagerloads(False).scalar()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\enoch\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\query.py", line 2835, in scalar
+    ret = self.one()
+  File "C:\Users\enoch\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\query.py", line 2808, in one
+    return self._iter().one()  # type: ignore
+           ~~~~~~~~~~^^
+  File "C:\Users\enoch\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\enoch\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 2365, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\enoch\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\orm\session.py", line 2239, in _execute_internal
+    bind = self.get_bind(**bind_arguments)
+  File "C:\Users\enoch\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask_sqlalchemy\session.py", line 53, in get_bind
+    engines = self._db.engines
+              ^^^^^^^^^^^^^^^^
+  File "C:\Users\enoch\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask_sqlalchemy\extension.py", line 690, in engines       
+    raise RuntimeError(
+    ...<3 lines>...
+    )
+RuntimeError: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances?
