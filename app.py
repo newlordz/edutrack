@@ -262,8 +262,9 @@ def init_db():
         db.create_all()
         create_sample_data()
 
-# Initialize database on first import
-init_db()
+# Initialize database only when running locally
+if __name__ == '__main__':
+    init_db()
 
 # Import route functions
 from routes import index, register, login, logout, dashboard, courses, course_detail, enroll, grades, profile
