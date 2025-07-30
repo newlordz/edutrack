@@ -1,0 +1,316 @@
+"TimeUTC","timestampInMs","requestPath","requestMethod","requestQueryString","responseStatusCode","requestId","requestUserAgent","level","environment","branch","vercelCache","type","function","host","deploymentDomain","deploymentId","durationMs","region","maxMemoryUsed","memorySize","message","projectId","traceId","sessionId","invocationId","instanceId","concurrency"
+"2025-07-30 11:50:56",1753876256681,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/favicon.png","GET","",-1,"tfpxt-1753876254294-ab895a344354","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",-1,"iad1",-1,-1,"✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+2025-07-30 11:50:54,457 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:54,457 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:54,457 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:54,457 - main - INFO - Attempting to import app...
+2025-07-30 11:50:56,474 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:56,477 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJQKKX4KRGA8KPPJ1392A6","",-1
+"2025-07-30 11:50:54",1753876254333,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/favicon.png","GET","",500,"tfpxt-1753876254294-ab895a344354","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",2331,"iad1",110,2048,"","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJQKKX4KRGA8KPPJ1392A6","",1
+"2025-07-30 11:50:52",1753876252162,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/favicon.png","GET","",-1,"gtpnj-1753876249751-331dd0ddbf03","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",-1,"iad1",-1,-1,"2025-07-30 11:50:49,920 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:49,920 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:49,920 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:49,920 - main - INFO - Attempting to import app...
+2025-07-30 11:50:51,939 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:51,942 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJQF5ZPP79882X1A5QA35Q","",-1
+"2025-07-30 11:50:49",1753876249790,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/favicon.png","GET","",500,"gtpnj-1753876249751-331dd0ddbf03","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",2351,"iad1",110,2048,"","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJQF5ZPP79882X1A5QA35Q","",1
+"2025-07-30 11:50:48",1753876248695,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/favicon.png","GET","",-1,"wqqd7-1753876246358-2fa3e8aa99d9","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",-1,"iad1",-1,-1,"✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+2025-07-30 11:50:46,534 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:46,534 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:46,534 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:46,534 - main - INFO - Attempting to import app...
+2025-07-30 11:50:48,446 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:48,449 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJQBVZTRY0ENWKAYQGG2ZA","",-1
+"2025-07-30 11:50:46",1753876246399,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/favicon.png","GET","",500,"wqqd7-1753876246358-2fa3e8aa99d9","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",2279,"iad1",110,2048,"","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJQBVZTRY0ENWKAYQGG2ZA","",1
+"2025-07-30 11:50:46",1753876246318,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/favicon.ico","GET","",-1,"qft6x-1753876243995-8ca44b54eaad","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",-1,"iad1",-1,-1,"✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+2025-07-30 11:50:44,162 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:44,162 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:44,162 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:44,162 - main - INFO - Attempting to import app...
+2025-07-30 11:50:46,092 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:46,095 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJQ9J4TFKNFDR7J5NW7PFW","",-1
+"2025-07-30 11:50:44",1753876244035,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/favicon.ico","GET","",500,"qft6x-1753876243995-8ca44b54eaad","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",2265,"iad1",110,2048,"","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJQ9J4TFKNFDR7J5NW7PFW","",1
+"2025-07-30 11:50:41",1753876241943,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/favicon.ico","GET","",-1,"rj2j2-1753876239748-07017b118cdd","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",-1,"iad1",-1,-1,"✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+2025-07-30 11:50:39,913 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:39,913 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:39,914 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:39,914 - main - INFO - Attempting to import app...
+2025-07-30 11:50:41,772 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:41,774 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJQ5DCVJZJ4WJ0YN6FYXJ1","",-1
+"2025-07-30 11:50:39",1753876239788,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/favicon.ico","GET","",500,"rj2j2-1753876239748-07017b118cdd","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",2139,"iad1",110,2048,"","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJQ5DCVJZJ4WJ0YN6FYXJ1","",1
+"2025-07-30 11:50:38",1753876238643,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/favicon.ico","GET","",-1,"rjjcr-1753876236190-a1a27ded726f","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",-1,"iad1",-1,-1,"✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+2025-07-30 11:50:36,403 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:36,403 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:36,403 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:36,403 - main - INFO - Attempting to import app...
+2025-07-30 11:50:38,427 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:38,441 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJQ1Y7X0ATBKNZJFR07EYF","",-1
+"2025-07-30 11:50:37",1753876237131,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/favicon.ico","GET","",-1,"brqbl-1753876235080-8e25419baeea","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",-1,"iad1",-1,-1,"✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+2025-07-30 11:50:35,241 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:35,241 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:35,241 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:35,241 - main - INFO - Attempting to import app...
+2025-07-30 11:50:36,981 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:36,984 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJQ0VG3C2M8E9VWA72DG35","",-1
+"2025-07-30 11:50:36",1753876236877,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/favicon.ico","GET","",-1,"brqbl-1753876234817-4581bb84b783","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",-1,"iad1",-1,-1,"✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+2025-07-30 11:50:34,972 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:34,972 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:34,973 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:34,973 - main - INFO - Attempting to import app...
+2025-07-30 11:50:36,719 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:36,721 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJQ0K5BKKCQSXW84J1AWBJ","",-1
+"2025-07-30 11:50:36",1753876236231,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/favicon.ico","GET","",500,"rjjcr-1753876236190-a1a27ded726f","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",2396,"iad1",110,2048,"","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJQ1Y7X0ATBKNZJFR07EYF","",1
+"2025-07-30 11:50:36",1753876236051,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/","GET","",-1,"svfl9-1753876233556-10c118ca5d45","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",-1,"iad1",-1,-1,"✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+2025-07-30 11:50:33,764 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:33,764 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:33,764 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:33,772 - main - INFO - Attempting to import app...
+2025-07-30 11:50:35,861 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:35,865 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJPZBTFVH9C4YC3Y3W3E6F","",-1
+"2025-07-30 11:50:35",1753876235120,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/favicon.ico","GET","",500,"brqbl-1753876235080-8e25419baeea","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",1994,"iad1",110,2048,"","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJQ0VG3C2M8E9VWA72DG35","",1
+"2025-07-30 11:50:34",1753876234945,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/","GET","",-1,"6ldfj-1753876230483-46544b3b56dc","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",-1,"iad1",-1,-1,"✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+2025-07-30 11:50:30,935 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:30,935 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:30,935 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:30,935 - main - INFO - Attempting to import app...
+2025-07-30 11:50:32,758 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:32,763 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.
+✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+2025-07-30 11:50:33,030 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:33,030 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:33,031 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:33,031 - main - INFO - Attempting to import app...
+2025-07-30 11:50:34,766 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:34,769 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJPWEVQ8GRN9JMDRRFCJJS","",-1
+"2025-07-30 11:50:34",1753876234853,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/favicon.ico","GET","",500,"brqbl-1753876234817-4581bb84b783","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",2006,"iad1",110,2048,"","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJQ0K5BKKCQSXW84J1AWBJ","",1
+"2025-07-30 11:50:34",1753876234719,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/","GET","",-1,"mflvx-1753876230445-810834028497","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",-1,"iad1",-1,-1,"✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+2025-07-30 11:50:30,799 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:30,799 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:30,799 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:30,799 - main - INFO - Attempting to import app...
+2025-07-30 11:50:32,580 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:32,584 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.
+2025-07-30 11:50:32,845 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:32,845 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:32,845 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:32,845 - main - INFO - Attempting to import app...
+2025-07-30 11:50:34,554 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:34,556 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJPWAPSH4YZ7CBQA2EY4GH","",-1
+"2025-07-30 11:50:34",1753876234474,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/","GET","",-1,"wdq7c-1753876229633-38ed4f62024c","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",-1,"iad1",-1,-1,"2025-07-30 11:50:30,156 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:30,157 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:30,157 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:30,157 - main - INFO - Attempting to import app...
+2025-07-30 11:50:32,088 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:32,093 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.
+✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+2025-07-30 11:50:32,415 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:32,415 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:32,415 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:32,415 - main - INFO - Attempting to import app...
+2025-07-30 11:50:34,272 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:34,275 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJPVNBAF2VAN7WJYZ25GKR","",-1
+"2025-07-30 11:50:33",1753876233594,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/","GET","",500,"svfl9-1753876233556-10c118ca5d45","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",2428,"iad1",110,2048,"","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJPZBTFVH9C4YC3Y3W3E6F","",1
+"2025-07-30 11:50:32",1753876232434,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/","GET","",-1,"mgrm5-1753876226387-bcd6c1d6c413","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",-1,"iad1",-1,-1,"2025-07-30 11:50:27,226 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:27,226 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:27,226 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:27,227 - main - INFO - Attempting to import app...
+2025-07-30 11:50:29,624 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:29,636 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+Python process exited with exit status: 1. The logs above can help with debugging the issue.
+✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+2025-07-30 11:50:30,090 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:30,090 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:30,090 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:30,090 - main - INFO - Attempting to import app...
+2025-07-30 11:50:32,243 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:32,246 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJPRS4BFB84M1HWN0BSWC4","",-1
+"2025-07-30 11:50:31",1753876231820,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/","GET","",-1,"qft6x-1753876229560-8539d5ddf5f8","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",-1,"iad1",-1,-1,"2025-07-30 11:50:29,749 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:29,749 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:29,749 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:29,749 - main - INFO - Attempting to import app...
+2025-07-30 11:50:31,624 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:31,627 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJPVFCCYY975N5WK7NZ39C","",-1
+"2025-07-30 11:50:31",1753876231276,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/","GET","",-1,"rjjcr-1753876226413-5a21ce57345e","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",-1,"iad1",-1,-1,"✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+2025-07-30 11:50:27,147 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:27,148 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:27,148 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:27,148 - main - INFO - Attempting to import app...
+2025-07-30 11:50:29,038 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:29,044 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.
+✓ Routes imported successfully
+✓ Teacher routes imported successfully
+✓ Admin routes imported successfully
+2025-07-30 11:50:29,337 - main - INFO - Python version: 3.12.11 (main, Jun 16 2025, 16:34:29) [GCC 11.5.0 20240719 (Red Hat 11.5.0-5)]
+2025-07-30 11:50:29,337 - main - INFO - Current working directory: /var/task
+2025-07-30 11:50:29,337 - main - INFO - Environment variables: DATABASE_URL=Not set
+2025-07-30 11:50:29,337 - main - INFO - Attempting to import app...
+2025-07-30 11:50:31,100 - main - INFO - ✓ App imported successfully
+2025-07-30 11:50:31,103 - main - INFO - ✓ Database connection successful
+Traceback (most recent call last):
+File ""/var/task/vc__handler__python.py"", line 213, in <module>
+if not issubclass(base, BaseHTTPRequestHandler):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: issubclass() arg 1 must be a class
+Python process exited with exit status: 1. The logs above can help with debugging the issue.","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJPRRR2Z1QHAJYJAT1GPMA","",-1
+"2025-07-30 11:50:30",1753876230619,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/","GET","",500,"6ldfj-1753876230483-46544b3b56dc","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",2015,"iad1",110,2048,"","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJPWEVQ8GRN9JMDRRFCJJS","",1
+"2025-07-30 11:50:30",1753876230486,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/","GET","",500,"mflvx-1753876230445-810834028497","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",1976,"iad1",110,2048,"","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJPWAPSH4YZ7CBQA2EY4GH","",1
+"2025-07-30 11:50:29",1753876229803,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/","GET","",500,"wdq7c-1753876229633-38ed4f62024c","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",2167,"iad1",110,2048,"","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJPVNBAF2VAN7WJYZ25GKR","",1
+"2025-07-30 11:50:29",1753876229612,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/","GET","",500,"qft6x-1753876229560-8539d5ddf5f8","vercel-favicon/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",2186,"iad1",110,2048,"","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJPVFCCYY975N5WK7NZ39C","",1
+"2025-07-30 11:50:26",1753876226852,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/","GET","",500,"mgrm5-1753876226387-bcd6c1d6c413","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",2496,"iad1",110,2048,"","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJPRS4BFB84M1HWN0BSWC4","",1
+"2025-07-30 11:50:26",1753876226840,"edutrack-qp3vks1uf-newlordzs-projects.vercel.app/","GET","",500,"rjjcr-1753876226413-5a21ce57345e","vercel-screenshot/1.0","error","production","main","MISS","lambda","/main.py","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","edutrack-qp3vks1uf-newlordzs-projects.vercel.app","dpl_AFzRZwGb5P7BrPABUCN2A7rsxfJB",2040,"iad1",110,2048,"","prj_mWlQhM4W0yJOXVlZPdphlqwqbIxe","","","01K1DJPRRR2Z1QHAJYJAT1GPMA","",1
