@@ -1,6 +1,5 @@
 from flask import Flask
 
-# Create a minimal app for testing
 app = Flask(__name__)
 
 @app.route('/')

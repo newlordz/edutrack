@@ -2,20 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "./main.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "15mb"
-      }
+      "src": "main.py",
+      "use": "@vercel/python@3.1"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/main.py"
+      "dest": "main.py"
     }
-  ],
-  "env": {
-    "FLASK_ENV": "production"
-  }
+  ]
 }
