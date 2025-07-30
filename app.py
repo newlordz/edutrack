@@ -265,6 +265,7 @@ def init_db():
 # Initialize database only when running locally
 if __name__ == '__main__':
     init_db()
+    app.run(debug=True)
 
 # Import route functions
 from routes import index, register, login, logout, dashboard, courses, course_detail, enroll, grades, profile
@@ -282,6 +283,11 @@ app.add_url_rule('/course/<int:course_id>', 'course_detail', course_detail)
 app.add_url_rule('/enroll/<int:course_id>', 'enroll', enroll)
 app.add_url_rule('/grades', 'grades', grades)
 app.add_url_rule('/profile', 'profile', profile)
+
+# Simple test route
+@app.route('/test')
+def test():
+    return {'status': 'success', 'message': 'App is running!'}
 
 # Database test route (for debugging)
 @app.route('/test-db')
