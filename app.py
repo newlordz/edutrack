@@ -16,8 +16,8 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # Configure the database
 database_url = os.environ.get("DATABASE_URL", "sqlite:///lms.db")
-# For Vercel, use PostgreSQL if available, otherwise fallback to SQLite
-if not database_url.startswith(('postgresql://', 'postgres://')):
+# For Vercel, always use SQLite since PostgreSQL dependencies aren't available
+if database_url.startswith(('postgresql://', 'postgres://')):
     database_url = "sqlite:///lms.db"
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
