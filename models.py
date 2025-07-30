@@ -9,6 +9,7 @@ class User(db.Model):
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
+    role = db.Column(db.String(20), default='student')  # student, teacher, admin
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
@@ -36,6 +37,7 @@ class Course(db.Model):
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
     instructor = db.Column(db.String(100), nullable=False)
+    instructor_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # Link to teacher
     duration_weeks = db.Column(db.Integer, nullable=False)
     difficulty = db.Column(db.String(20), nullable=False)  # Beginner, Intermediate, Advanced
     max_students = db.Column(db.Integer, default=30)
@@ -44,6 +46,8 @@ class Course(db.Model):
     # Relationships
     enrollments = db.relationship('Enrollment', backref='course', lazy=True)
     grades = db.relationship('Grade', backref='course', lazy=True)
+    materials = db.relationship('CourseMaterial', backref='course', lazy=True)
+    announcements = db.relationship('Announcement', backref='course', lazy=True)
     
     def get_enrolled_count(self):
         return len(self.enrollments)
@@ -52,8 +56,10 @@ class Course(db.Model):
         return self.get_enrolled_count() >= self.max_students
     
     def get_average_grade(self):
-        grades = [grade.score for grade in self.grades if grade.score is not None]
-        return sum(grades) / len(grades) if grades else 0
+        valid_grades = [grade.score for grade in self.grades if grade.score is not None and grade.score >= 0]
+        if not valid_grades:
+            return 0.0
+        return round(sum(valid_grades) / len(valid_grades), 2)
     
     def __repr__(self):
         return f'<Course {self.title}>'
@@ -97,3 +103,27 @@ class Grade(db.Model):
     
     def __repr__(self):
         return f'<Grade {self.assignment_name}: {self.score}>'
+
+class CourseMaterial(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    file_path = db.Column(db.String(500))
+    file_type = db.Column(db.String(50))  # pdf, video, document, etc.
+    uploaded_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<CourseMaterial {self.title}>'
+
+class Announcement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<Announcement {self.title}>'

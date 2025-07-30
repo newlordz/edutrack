@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Grade Assignment - {{ student.first_name }} {{ student.last_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>Grade Assignment
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Student Info -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <h6 class="mb-2">Student Information</h6>
+                                <p class="mb-1"><strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}</p>
+                                <p class="mb-1"><strong>Email:</strong> {{ student.email }}</p>
+                                <p class="mb-0"><strong>Course:</strong> {{ course.title }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="assignment_name" class="form-label">Assignment Name *</label>
+                                <input type="text" class="form-control" id="assignment_name" name="assignment_name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="score" class="form-label">Score (%) *</label>
+                                <input type="number" class="form-control" id="score" name="score" min="0" max="100" step="0.1" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="feedback" class="form-label">Feedback</label>
+                                <textarea class="form-control" id="feedback" name="feedback" rows="4" placeholder="Provide constructive feedback for the student..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('manage_course', course_id=course.id) }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Course
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Submit Grade
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

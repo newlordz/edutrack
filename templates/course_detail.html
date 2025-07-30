@@ -35,10 +35,31 @@
         </div>
         
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm sticky-top" style="top: 2rem;">
+            <div class="enrollment-card sticky-top" style="top: 2rem;">
                 <div class="card-body">
                     {% if session.user_id %}
-                        {% if enrolled %}
+                        {% if user.role == 'teacher' %}
+                            <div class="text-center mb-4">
+                                <i class="fas fa-chalkboard-teacher text-info" style="font-size: 3rem;"></i>
+                                <h5 class="mt-2 text-info">Teacher View</h5>
+                                <p class="text-muted">As a teacher, you can manage this course but cannot enroll as a student.</p>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                {% if course.instructor_id == user.id %}
+                                    <a href="{{ url_for('manage_course', course_id=course.id) }}" class="btn btn-primary">
+                                        <i class="fas fa-cog me-2"></i>Manage Course
+                                    </a>
+                                {% else %}
+                                    <a href="{{ url_for('teacher_dashboard') }}" class="btn btn-primary">
+                                        <i class="fas fa-tachometer-alt me-2"></i>Teacher Dashboard
+                                    </a>
+                                {% endif %}
+                                <a href="{{ url_for('create_course') }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-plus me-2"></i>Create Course
+                                </a>
+                            </div>
+                        {% elif enrolled %}
                             <div class="text-center mb-4">
                                 <i class="fas fa-check-circle text-success" style="font-size: 3rem;"></i>
                                 <h5 class="mt-2 text-success">You're Enrolled!</h5>
@@ -94,9 +115,11 @@
                         {% endif %}
                     {% else %}
                         <div class="text-center mb-4">
-                            <i class="fas fa-sign-in-alt text-primary" style="font-size: 3rem;"></i>
-                            <h5 class="mt-2">Login to Enroll</h5>
-                            <p class="text-muted">Create an account or sign in to enroll in this course.</p>
+                            <div class="enrollment-icon">
+                                <i class="fas fa-sign-in-alt"></i>
+                            </div>
+                            <h5 class="enrollment-title">Login to Enroll</h5>
+                            <p class="enrollment-description">Create an account or sign in to enroll in this course.</p>
                         </div>
                         
                         <div class="d-grid gap-2">

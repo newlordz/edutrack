@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - EduTrack{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="welcome-card">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="welcome-title">Welcome, {{ user.first_name }}! 👨‍💼</h1>
+                        <p class="welcome-subtitle">System administration and management</p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <a href="{{ url_for('manage_users') }}" class="btn btn-primary">
+                            <i class="fas fa-users me-2"></i>Manage Users
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Stats -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <i class="fas fa-users" style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                </div>
+                <div class="stats-number">{{ total_users }}</div>
+                <div class="stats-label">Total Users</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <i class="fas fa-book-open" style="background: var(--success-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                </div>
+                <div class="stats-number">{{ total_courses }}</div>
+                <div class="stats-label">Total Courses</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <i class="fas fa-graduation-cap" style="background: var(--warning-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                </div>
+                <div class="stats-number">{{ total_enrollments }}</div>
+                <div class="stats-label">Enrollments</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <i class="fas fa-chart-bar" style="background: var(--secondary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                </div>
+                <div class="stats-number">{{ total_grades }}</div>
+                <div class="stats-label">Grades</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Distribution -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users me-2"></i>User Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="user-stats">
+                        <div class="user-stat-item">
+                            <div class="user-stat-label">Students</div>
+                            <div class="user-stat-value">{{ students }}</div>
+                        </div>
+                        <div class="user-stat-item">
+                            <div class="user-stat-label">Teachers</div>
+                            <div class="user-stat-value">{{ teachers }}</div>
+                        </div>
+                        <div class="user-stat-item">
+                            <div class="user-stat-label">Admins</div>
+                            <div class="user-stat-value">{{ admins }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>User Distribution Chart
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="userChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row g-4">
+        <!-- Recent Users -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>Recent Users
+                    </h5>
+                    <a href="{{ url_for('manage_users') }}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_users %}
+                    <div class="user-list">
+                        {% for user in recent_users %}
+                        <div class="user-item">
+                            <div class="user-info">
+                                <div class="user-name">{{ user.first_name }} {{ user.last_name }}</div>
+                                <div class="user-email">{{ user.email }}</div>
+                                <span class="badge bg-{{ 'primary' if user.role == 'student' else 'success' if user.role == 'teacher' else 'danger' }}">
+                                    {{ user.role|title }}
+                                </span>
+                            </div>
+                            <div class="user-actions">
+                                <a href="{{ url_for('edit_user', user_id=user.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center">No users found</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Courses -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-book me-2"></i>Recent Courses
+                    </h5>
+                    <a href="{{ url_for('manage_courses') }}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_courses %}
+                    <div class="course-list">
+                        {% for course in recent_courses %}
+                        <div class="course-item">
+                            <div class="course-info">
+                                <div class="course-name">{{ course.title }}</div>
+                                <div class="course-instructor">{{ course.instructor }}</div>
+                                <div class="course-stats">
+                                    <span class="badge bg-primary me-2">{{ course.difficulty }}</span>
+                                    <span class="badge bg-info">{{ course.enrollments|length }} students</span>
+                                </div>
+                            </div>
+                            <div class="course-actions">
+                                <a href="{{ url_for('edit_course', course_id=course.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center">No courses found</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a href="{{ url_for('manage_users') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-users me-2"></i>Manage Users
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('manage_courses') }}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-book me-2"></i>Manage Courses
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('system_analytics') }}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-chart-bar me-2"></i>Analytics
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('courses') }}" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-search me-2"></i>Browse Courses
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // User Distribution Chart
+    const userCtx = document.getElementById('userChart').getContext('2d');
+    new Chart(userCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Students', 'Teachers', 'Admins'],
+            datasets: [{
+                data: [{{ students }}, {{ teachers }}, {{ admins }}],
+                backgroundColor: [
+                    '#667eea',
+                    '#4facfe',
+                    '#f093fb'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %} 

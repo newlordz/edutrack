@@ -1,17 +1,24 @@
 {% extends "base.html" %}
 
-{% block title %}Login - EduLearn{% endblock %}
+{% block title %}Login - EduTrack{% endblock %}
+
+<!-- Force cache refresh -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
-            <div class="card border-0 shadow">
+            <div class="glass-card">
                 <div class="card-body p-5">
                     <div class="text-center mb-4">
-                        <i class="fas fa-sign-in-alt text-primary" style="font-size: 3rem;"></i>
-                        <h2 class="mt-3 mb-1">Welcome Back</h2>
-                        <p class="text-muted">Sign in to your account</p>
+                        <div class="mb-3">
+                            <i class="fas fa-sign-in-alt" style="font-size: 3rem; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                        </div>
+                        <h2 class="fw-bold mb-2">Welcome Back</h2>
+                        <p class="text-muted">Sign in to your EduTrack account</p>
                     </div>
                     
                     <form method="POST">
@@ -41,10 +48,84 @@
                     </form>
                     
                     <div class="text-center">
-                        <p class="text-muted">Don't have an account? 
-                            <a href="{{ url_for('register') }}" class="text-decoration-none">Sign up here</a>
+                        <p class="text-muted mb-0">Don't have an account? 
+                            <a href="{{ url_for('register') }}" class="text-decoration-none fw-semibold">Sign up here</a>
                         </p>
                     </div>
+                    
+                    <!-- Test Accounts Section -->
+                    <div class="mt-4 p-3" style="background: rgba(102, 126, 234, 0.1); border-radius: 10px; border: 1px solid rgba(102, 126, 234, 0.2);">
+                        <h6 class="text-center mb-3" style="color: #667eea;">
+                            <i class="fas fa-info-circle me-2"></i>Test Accounts
+                        </h6>
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center p-2" style="background: rgba(255,255,255,0.7); border-radius: 5px; margin-bottom: 0.5rem;">
+                                    <div>
+                                        <strong>Student:</strong> student / student123
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="fillCredentials('student', 'student123')">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center p-2" style="background: rgba(255,255,255,0.7); border-radius: 5px; margin-bottom: 0.5rem;">
+                                    <div>
+                                        <strong>Teacher:</strong> teacher / teacher123
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="fillCredentials('teacher', 'teacher123')">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center p-2" style="background: rgba(255,255,255,0.7); border-radius: 5px;">
+                                    <div>
+                                        <strong>Admin:</strong> admin / admin123
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="fillCredentials('admin', 'admin123')">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-center mt-2 mb-0" style="font-size: 0.8rem; color: #667eea;">
+                            Click the copy button to auto-fill credentials
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function fillCredentials(username, password) {
+    document.getElementById('username').value = username;
+    document.getElementById('password').value = password;
+    
+    // Show a brief notification
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #28a745;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        z-index: 1000;
+        font-size: 0.9rem;
+    `;
+    notification.textContent = `Credentials filled: ${username}`;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 2000);
+}
+</script>
                 </div>
             </div>
         </div>

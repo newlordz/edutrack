@@ -1,26 +1,44 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}EduLearn - Learning Management System{% endblock %}</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>{% block title %}EduTrack - Modern Learning Management System{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom_new.css', v='1.5') }}">
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index') }}">
-                <i class="fas fa-graduation-cap me-2"></i>EduLearn
+                <i class="fas fa-graduation-cap me-2"></i>EduTrack
             </a>
+            
+            <!-- Search Bar (Desktop) -->
+            {% if session.user_id %}
+            <div class="navbar-nav mx-auto d-none d-lg-flex">
+                <div class="search-container-nav">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="form-control" placeholder="Search courses, instructors..." id="navSearch">
+                </div>
+            </div>
+            {% endif %}
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -49,21 +67,97 @@
                             <i class="fas fa-chart-line me-1"></i>Grades
                         </a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-tools me-1"></i>Resources
+                        </a>
+                        <ul class="dropdown-menu glass-card">
+                            <li><a class="dropdown-item" href="#">
+                                <i class="fas fa-book-open me-2"></i>Study Materials
+                            </a></li>
+                            <li><a class="dropdown-item" href="#">
+                                <i class="fas fa-video me-2"></i>Video Library
+                            </a></li>
+                            <li><a class="dropdown-item" href="#">
+                                <i class="fas fa-file-pdf me-2"></i>Documents
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">
+                                <i class="fas fa-question-circle me-2"></i>Help Center
+                            </a></li>
+                        </ul>
+                    </li>
                     {% endif %}
                 </ul>
                 
                 <ul class="navbar-nav">
                     {% if session.user_id %}
+                    <!-- Notifications -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user me-1"></i>{{ session.username }}
+                        <a class="nav-link position-relative" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-bell me-1"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                3
+                            </span>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ url_for('profile') }}">
-                                <i class="fas fa-user-circle me-2"></i>Profile
+                        <ul class="dropdown-menu dropdown-menu-end glass-card notification-dropdown">
+                            <li><h6 class="dropdown-header">Notifications</h6></li>
+                            <li><a class="dropdown-item" href="#">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-graduation-cap text-primary"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <div class="fw-bold">New Course Available</div>
+                                        <div class="small text-muted">Advanced JavaScript is now open for enrollment</div>
+                                        <div class="small text-muted">2 hours ago</div>
+                                    </div>
+                                </div>
+                            </a></li>
+                            <li><a class="dropdown-item" href="#">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-chart-line text-success"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <div class="fw-bold">Grade Updated</div>
+                                        <div class="small text-muted">Your Python assignment has been graded</div>
+                                        <div class="small text-muted">1 day ago</div>
+                                    </div>
+                                </div>
                             </a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                            <li><a class="dropdown-item text-center" href="#">View All Notifications</a></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- User Profile -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <div class="profile-avatar-nav me-2">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span>{{ session.username }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end glass-card">
+                            <li><a class="dropdown-item" href="{{ url_for('profile') }}">
+                                <i class="fas fa-user me-2"></i>My Profile
+                            </a></li>
+                            <li><a class="dropdown-item" href="#">
+                                <i class="fas fa-cog me-2"></i>Settings
+                            </a></li>
+                            <li><a class="dropdown-item" href="#">
+                                <i class="fas fa-calendar me-2"></i>My Schedule
+                            </a></li>
+                            <li><a class="dropdown-item" href="#">
+                                <i class="fas fa-certificate me-2"></i>Certificates
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">
+                                <i class="fas fa-question-circle me-2"></i>Help & Support
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}">
                                 <i class="fas fa-sign-out-alt me-2"></i>Logout
                             </a></li>
                         </ul>
@@ -75,8 +169,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('register') }}">
-                            <i class="fas fa-user-plus me-1"></i>Register
+                        <a class="btn btn-primary ms-2" href="{{ url_for('register') }}">
+                            <i class="fas fa-user-plus me-1"></i>Get Started
                         </a>
                     </li>
                     {% endif %}
@@ -85,44 +179,140 @@
         </div>
     </nav>
 
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="container mt-3">
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-
     <!-- Main Content -->
-    <main>
+    <main style="padding-top: 80px;">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="container mt-4">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show animate-fade-in" role="alert">
+                            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' if category == 'warning' else 'info-circle' if category == 'info' else 'times-circle' }} me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
         {% block content %}{% endblock %}
     </main>
 
     <!-- Footer -->
-    <footer class="bg-dark text-light py-4 mt-5">
+    <footer class="mt-5">
         <div class="container">
             <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5><i class="fas fa-graduation-cap me-2"></i>EduTrack</h5>
+                    <p>Empowering students through modern education technology. Transform your learning journey with our comprehensive LMS platform.</p>
+                    <div class="social-links">
+                        <a href="#" class="me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="me-3"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="me-3"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6>Platform</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('courses') }}">Courses</a></li>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Updates</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6>Support</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Community</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6>Company</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Press</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6>Legal</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                        <li><a href="#">Security</a></li>
+                        <li><a href="#">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4" style="border-color: rgba(255,255,255,0.2);">
+            <div class="row align-items-center">
                 <div class="col-md-6">
-                    <h5><i class="fas fa-graduation-cap me-2"></i>EduLearn</h5>
-                    <p class="text-muted">Empowering students through quality education and technology.</p>
+                    <p class="mb-0">&copy; 2025 EduTrack. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <p class="text-muted">&copy; 2025 EduLearn. All rights reserved.</p>
+                    <p class="mb-0">Made with <i class="fas fa-heart text-danger"></i> for education</p>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- Floating Action Buttons -->
+    <button class="fab fab-left" onclick="scrollToTop()" id="fab-scroll" style="display: block !important; background: red !important;">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
+
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Custom JS -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js', v='2.0') }}"></script>
+    
+    <script>
+        // Show/hide scroll-to-top floating action button
+        window.onscroll = function() {
+            const fabScroll = document.getElementById('fab-scroll');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                fabScroll.style.display = 'block';
+            } else {
+                fabScroll.style.display = 'none';
+            }
+        };
+
+        // Debug: Check if buttons exist
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, checking for FAB buttons...');
+            const fabScroll = document.getElementById('fab-scroll');
+            
+            if (fabScroll) {
+                console.log('✅ Scroll-to-top button found');
+            } else {
+                console.log('❌ Scroll-to-top button NOT found');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+
+
+        // Add animation classes to elements
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card, .course-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = (index * 0.1) + 's';
+                card.classList.add('animate-fade-in');
+            });
+        });
+    </script>
 </body>
 </html>
