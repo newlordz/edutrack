@@ -3,6 +3,8 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(db.Model):
+    __tablename__ = 'user'
+    
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -33,6 +35,8 @@ class User(db.Model):
         return f'<User {self.username}>'
 
 class Course(db.Model):
+    __tablename__ = 'course'
+    
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
@@ -65,6 +69,8 @@ class Course(db.Model):
         return f'<Course {self.title}>'
 
 class Enrollment(db.Model):
+    __tablename__ = 'enrollment'
+    
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
@@ -78,6 +84,8 @@ class Enrollment(db.Model):
         return f'<Enrollment User:{self.user_id} Course:{self.course_id}>'
 
 class Grade(db.Model):
+    __tablename__ = 'grade'
+    
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
@@ -105,6 +113,8 @@ class Grade(db.Model):
         return f'<Grade {self.assignment_name}: {self.score}>'
 
 class CourseMaterial(db.Model):
+    __tablename__ = 'course_material'
+    
     id = db.Column(db.Integer, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
     title = db.Column(db.String(200), nullable=False)
@@ -118,6 +128,8 @@ class CourseMaterial(db.Model):
         return f'<CourseMaterial {self.title}>'
 
 class Announcement(db.Model):
+    __tablename__ = 'announcement'
+    
     id = db.Column(db.Integer, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
     title = db.Column(db.String(200), nullable=False)

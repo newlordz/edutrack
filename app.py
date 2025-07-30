@@ -29,32 +29,33 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 # Initialize the app with the extension
 db.init_app(app)
 
+# Import models after db initialization to avoid circular imports
+from models import User, Course, Enrollment, Grade, CourseMaterial, Announcement
+
 def create_sample_data():
     """Create sample courses and users if database is empty"""
-    import models
-    
     # Clear existing data and recreate
-    models.Course.query.delete()
-    models.User.query.delete()
+    Course.query.delete()
+    User.query.delete()
     db.session.commit()
     
     # Create sample users
     sample_users = [
-        models.User(
+        User(
             username="admin",
             email="admin@edutrack.com",
             first_name="Admin",
             last_name="User",
             role="admin"
         ),
-        models.User(
+        User(
             username="student",
             email="student@edutrack.com",
             first_name="John",
             last_name="Student",
             role="student"
         ),
-        models.User(
+        User(
             username="teacher",
             email="teacher@edutrack.com",
             first_name="Sarah",
@@ -74,7 +75,7 @@ def create_sample_data():
     db.session.commit()
     
     sample_courses = [
-        models.Course(
+        Course(
             title="Introduction to Python Programming",
             description="Learn the fundamentals of Python programming including variables, data types, control structures, and functions.",
             instructor="Dr. Sarah Johnson",
@@ -82,7 +83,7 @@ def create_sample_data():
             difficulty="Beginner",
             max_students=30
         ),
-        models.Course(
+        Course(
             title="Web Development with Flask",
             description="Build dynamic web applications using Flask framework, HTML, CSS, and JavaScript.",
             instructor="Prof. Michael Chen",
@@ -90,7 +91,7 @@ def create_sample_data():
             difficulty="Intermediate",
             max_students=25
         ),
-        models.Course(
+        Course(
             title="Data Science Fundamentals",
             description="Introduction to data analysis, visualization, and machine learning concepts using Python.",
             instructor="Dr. Emily Rodriguez",
@@ -98,7 +99,7 @@ def create_sample_data():
             difficulty="Intermediate",
             max_students=20
         ),
-        models.Course(
+        Course(
             title="Database Design and SQL",
             description="Learn database design principles, SQL queries, and database management systems.",
             instructor="Prof. David Kim",
@@ -106,7 +107,7 @@ def create_sample_data():
             difficulty="Beginner",
             max_students=35
         ),
-        models.Course(
+        Course(
             title="Advanced JavaScript",
             description="Master advanced JavaScript concepts including ES6+, async programming, and modern frameworks.",
             instructor="Ms. Lisa Wang",
@@ -114,7 +115,7 @@ def create_sample_data():
             difficulty="Advanced",
             max_students=15
         ),
-        models.Course(
+        Course(
             title="Mobile App Development with React Native",
             description="Build cross-platform mobile applications using React Native and JavaScript.",
             instructor="Mr. Alex Thompson",
@@ -122,7 +123,7 @@ def create_sample_data():
             difficulty="Intermediate",
             max_students=18
         ),
-        models.Course(
+        Course(
             title="Machine Learning Basics",
             description="Introduction to machine learning algorithms, data preprocessing, and model evaluation.",
             instructor="Dr. Maria Garcia",
@@ -130,7 +131,7 @@ def create_sample_data():
             difficulty="Advanced",
             max_students=12
         ),
-        models.Course(
+        Course(
             title="Cybersecurity Fundamentals",
             description="Learn essential cybersecurity concepts, threat detection, and security best practices.",
             instructor="Prof. James Wilson",
@@ -138,7 +139,7 @@ def create_sample_data():
             difficulty="Intermediate",
             max_students=22
         ),
-        models.Course(
+        Course(
             title="UI/UX Design Principles",
             description="Master user interface and user experience design principles and best practices.",
             instructor="Ms. Rachel Green",
@@ -146,7 +147,7 @@ def create_sample_data():
             difficulty="Beginner",
             max_students=25
         ),
-        models.Course(
+        Course(
             title="Cloud Computing with AWS",
             description="Learn cloud computing fundamentals and AWS services for scalable applications.",
             instructor="Mr. Kevin Martinez",
@@ -154,7 +155,7 @@ def create_sample_data():
             difficulty="Intermediate",
             max_students=20
         ),
-        models.Course(
+        Course(
             title="DevOps Fundamentals",
             description="Introduction to DevOps practices, CI/CD pipelines, and automation tools.",
             instructor="Dr. Amanda Foster",
@@ -162,7 +163,7 @@ def create_sample_data():
             difficulty="Advanced",
             max_students=18
         ),
-        models.Course(
+        Course(
             title="Blockchain Development",
             description="Learn blockchain technology and smart contract development with Solidity.",
             instructor="Prof. Robert Chen",
@@ -170,7 +171,7 @@ def create_sample_data():
             difficulty="Advanced",
             max_students=15
         ),
-        models.Course(
+        Course(
             title="Digital Marketing Strategy",
             description="Master digital marketing techniques, SEO, and social media marketing.",
             instructor="Ms. Jennifer Lee",
@@ -178,7 +179,7 @@ def create_sample_data():
             difficulty="Beginner",
             max_students=30
         ),
-        models.Course(
+        Course(
             title="Project Management",
             description="Learn project management methodologies and tools for successful project delivery.",
             instructor="Mr. Thomas Anderson",
@@ -186,7 +187,7 @@ def create_sample_data():
             difficulty="Intermediate",
             max_students=25
         ),
-        models.Course(
+        Course(
             title="Data Visualization",
             description="Create compelling data visualizations using tools like Tableau and D3.js.",
             instructor="Dr. Sarah Williams",
@@ -194,7 +195,7 @@ def create_sample_data():
             difficulty="Intermediate",
             max_students=20
         ),
-        models.Course(
+        Course(
             title="Artificial Intelligence Basics",
             description="Introduction to AI concepts, neural networks, and machine learning applications.",
             instructor="Prof. Michael Brown",
@@ -202,7 +203,7 @@ def create_sample_data():
             difficulty="Advanced",
             max_students=16
         ),
-        models.Course(
+        Course(
             title="Web Security",
             description="Learn web application security, vulnerability assessment, and penetration testing.",
             instructor="Mr. David Clark",
@@ -210,7 +211,7 @@ def create_sample_data():
             difficulty="Advanced",
             max_students=18
         ),
-        models.Course(
+        Course(
             title="Mobile Game Development",
             description="Create mobile games using Unity and C# programming language.",
             instructor="Ms. Lisa Rodriguez",
@@ -218,7 +219,7 @@ def create_sample_data():
             difficulty="Intermediate",
             max_students=20
         ),
-        models.Course(
+        Course(
             title="E-commerce Development",
             description="Build online stores and e-commerce platforms using modern web technologies.",
             instructor="Prof. Daniel Taylor",
@@ -226,7 +227,7 @@ def create_sample_data():
             difficulty="Intermediate",
             max_students=22
         ),
-        models.Course(
+        Course(
             title="Content Creation",
             description="Learn content creation, video editing, and digital storytelling techniques.",
             instructor="Ms. Emily Davis",
@@ -234,7 +235,7 @@ def create_sample_data():
             difficulty="Beginner",
             max_students=28
         ),
-        models.Course(
+        Course(
             title="Network Administration",
             description="Master network administration, configuration, and troubleshooting skills.",
             instructor="Mr. Christopher Wilson",
@@ -245,7 +246,7 @@ def create_sample_data():
     ]
     
     # Assign some courses to the teacher
-    teacher = models.User.query.filter_by(username='teacher').first()
+    teacher = User.query.filter_by(username='teacher').first()
     
     for i, course in enumerate(sample_courses):
         # Assign first 5 courses to the teacher
@@ -257,7 +258,6 @@ def create_sample_data():
 def init_db():
     """Initialize database and create sample data"""
     with app.app_context():
-        import models
         # Drop all tables and recreate them to ensure fresh schema
         db.drop_all()
         db.create_all()
@@ -347,14 +347,13 @@ def test_db():
 def init_db_route():
     try:
         with app.app_context():
-            import models
             # Create tables if they don't exist
             db.create_all()
             # Check if we have any users
-            user_count = models.User.query.count()
+            user_count = User.query.count()
             if user_count == 0:
                 create_sample_data()
-                return {'status': 'success', 'message': 'Database initialized with sample data!', 'user_count': models.User.query.count()}
+                return {'status': 'success', 'message': 'Database initialized with sample data!', 'user_count': User.query.count()}
             else:
                 return {'status': 'success', 'message': 'Database already initialized!', 'user_count': user_count}
     except Exception as e:
