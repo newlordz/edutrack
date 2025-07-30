@@ -11,5 +11,9 @@
       "src": "/(.*)",
       "dest": "main.py"
     }
-  ]
+  ],
+  "env": {
+    "FLASK_ENV": "production",
+    "SESSION_SECRET": "your-secret-key-here"
+  }
 }
