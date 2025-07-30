@@ -381,4 +381,5 @@ app.add_url_rule('/admin/analytics', 'system_analytics', system_analytics)
 if __name__ == '__main__':
     # Initialize database and run locally
     init_db()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
