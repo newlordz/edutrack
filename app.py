@@ -262,11 +262,6 @@ def init_db():
         db.create_all()
         create_sample_data()
 
-# Initialize database only when running locally
-if __name__ == '__main__':
-    init_db()
-    app.run(debug=True)
-
 # Import route functions
 from routes import index, register, login, logout, dashboard, courses, course_detail, enroll, grades, profile
 from teacher_routes import teacher_dashboard, create_course, manage_course, grade_assignment, upload_material, create_announcement
@@ -319,6 +314,6 @@ app.add_url_rule('/admin/delete-course/<int:course_id>', 'delete_course', delete
 app.add_url_rule('/admin/analytics', 'system_analytics', system_analytics)
 
 if __name__ == '__main__':
-    # Only enable debug mode in development
-    debug_mode = os.environ.get('FLASK_ENV') == 'development'
-    app.run(host='0.0.0.0', port=5000, debug=debug_mode)
+    # Initialize database and run locally
+    init_db()
+    app.run(host='0.0.0.0', port=5000, debug=True)
