@@ -23,7 +23,7 @@
                         </div>
                     </div>
 
-                    <form method="POST">
+                    <form method="POST" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="title" class="form-label">Material Title *</label>
@@ -41,8 +41,8 @@
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="file" class="form-label">File (Optional)</label>
-                                <input type="file" class="form-control" id="file" name="file" disabled>
-                                <small class="text-muted">File upload functionality will be implemented in future versions.</small>
+                                <input type="file" class="form-control" id="file" name="file" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx,.mp4,.avi,.mov,.jpg,.jpeg,.png,.gif">
+                                <small class="text-muted">Supported formats: PDF, Word, PowerPoint, Text, Video, Images. Max size: 10MB</small>
                             </div>
                         </div>
                         

@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Manage User Deletion Requests - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="mb-0">
+                    <i class="fas fa-user-times text-danger me-2"></i>User Account Deletion Requests
+                </h1>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Admin Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-warning">
+                <div class="card-body text-center">
+                    <h3 class="text-warning mb-1">{{ requests|selectattr('status', 'equalto', 'pending')|list|length }}</h3>
+                    <p class="text-muted mb-0">Pending</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <h3 class="text-success mb-1">{{ requests|selectattr('status', 'equalto', 'approved')|list|length }}</h3>
+                    <p class="text-muted mb-0">Approved</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-danger">
+                <div class="card-body text-center">
+                    <h3 class="text-danger mb-1">{{ requests|selectattr('status', 'equalto', 'denied')|list|length }}</h3>
+                    <p class="text-muted mb-0">Denied</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-info">
+                <div class="card-body text-center">
+                    <h3 class="text-info mb-1">{{ requests|length }}</h3>
+                    <p class="text-muted mb-0">Total</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deletion Requests Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>All User Deletion Requests
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if requests %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Reason</th>
+                                        <th>Status</th>
+                                        <th>Requested</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for deletion_request in requests %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ deletion_request.user.first_name }} {{ deletion_request.user.last_name }}</strong>
+                                            <br>
+                                            <small class="text-muted">@{{ deletion_request.user.username }}</small>
+                                            <br>
+                                            <span class="badge bg-secondary">{{ deletion_request.user.role|title }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="text-truncate" style="max-width: 200px;" title="{{ deletion_request.reason }}">
+                                                {{ deletion_request.reason[:100] }}{% if deletion_request.reason|length > 100 %}...{% endif %}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {% if deletion_request.status == 'pending' %}
+                                                <span class="badge bg-warning">Pending</span>
+                                            {% elif deletion_request.status == 'approved' %}
+                                                <span class="badge bg-success">Approved</span>
+                                            {% elif deletion_request.status == 'denied' %}
+                                                <span class="badge bg-danger">Denied</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <small>{{ deletion_request.created_at.strftime('%B %d, %Y') }}</small>
+                                            <br>
+                                            <small class="text-muted">{{ deletion_request.created_at.strftime('%I:%M %p') }}</small>
+                                        </td>
+                                        <td>
+                                            {% if deletion_request.status == 'pending' %}
+                                                <a href="{{ url_for('review_user_deletion_request', request_id=deletion_request.id) }}"
+                                                   class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-eye me-1"></i>Review
+                                                </a>
+                                            {% else %}
+                                                <div class="text-muted">
+                                                    {% if deletion_request.reviewed_by %}
+                                                        Reviewed by {{ deletion_request.reviewer.first_name }} {{ deletion_request.reviewer.last_name }}
+                                                        <br>
+                                                        <small>{{ deletion_request.reviewed_at.strftime('%B %d, %Y') }}</small>
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        {% if pagination.pages > 1 %}
+                        <nav aria-label="User deletion requests pagination" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                {% if pagination.has_prev %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('manage_user_deletion_requests', page=pagination.prev_num) }}">
+                                            <i class="fas fa-chevron-left"></i> Previous
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                
+                                {% for page_num in pagination.iter_pages() %}
+                                    {% if page_num %}
+                                        {% if page_num != pagination.page %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ url_for('manage_user_deletion_requests', page=page_num) }}">{{ page_num }}</a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item active">
+                                                <span class="page-link">{{ page_num }}</span>
+                                            </li>
+                                        {% endif %}
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if pagination.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('manage_user_deletion_requests', page=pagination.next_num) }}">
+                                            Next <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-user-times text-muted" style="font-size: 4rem;"></i>
+                            <h5 class="mt-3 text-muted">No user deletion requests found</h5>
+                            <p class="text-muted">Users haven't submitted any account deletion requests yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

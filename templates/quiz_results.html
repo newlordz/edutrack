@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Results - {{ attempt.quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('course_detail', course_id=attempt.quiz.course.id) }}">{{ attempt.quiz.course.title }}</a></li>
+            <li class="breadcrumb-item active">Quiz Results</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header {% if attempt.passed %}bg-success{% else %}bg-danger{% endif %} text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-{% if attempt.passed %}check-circle{% else %}times-circle{% endif %} me-2"></i>
+                            Quiz Results: {{ attempt.quiz.title }}
+                        </h4>
+                        <div class="text-end">
+                            <div class="h5 mb-0">{{ attempt.percentage|round(1) }}%</div>
+                            <div class="small">
+                                {% if attempt.passed %}
+                                    <i class="fas fa-trophy me-1"></i>PASSED
+                                {% else %}
+                                    <i class="fas fa-times me-1"></i>FAILED
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Score Summary -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="text-center p-3 bg-light rounded">
+                                <h3 class="text-primary mb-1">{{ attempt.score }}</h3>
+                                <small class="text-muted">Score</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-3 bg-light rounded">
+                                <h3 class="text-info mb-1">{{ attempt.max_score }}</h3>
+                                <small class="text-muted">Total Points</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-3 bg-light rounded">
+                                <h3 class="{% if attempt.passed %}text-success{% else %}text-danger{% endif %} mb-1">
+                                    {{ attempt.percentage|round(1) }}%
+                                </h3>
+                                <small class="text-muted">Percentage</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold">Performance</span>
+                            <span class="text-muted">{{ attempt.score }}/{{ attempt.max_score }}</span>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar {% if attempt.passed %}bg-success{% else %}bg-danger{% endif %}" 
+                                 style="width: {{ attempt.percentage }}%">
+                                {{ attempt.percentage|round(1) }}%
+                            </div>
+                        </div>
+                        <div class="text-center mt-2">
+                            <small class="text-muted">
+                                Passing Score: {{ attempt.quiz.passing_score }}%
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Question Review -->
+                    <h5 class="mb-3">
+                        <i class="fas fa-list me-2"></i>Question Review
+                    </h5>
+                    
+                    {% for answer in attempt.answers %}
+                    <div class="question-review mb-3 p-3 border rounded {% if answer.is_correct %}border-success bg-light{% else %}border-danger bg-light{% endif %}">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="mb-0">
+                                <span class="badge {% if answer.is_correct %}bg-success{% else %}bg-danger{% endif %} me-2">
+                                    {{ loop.index }}
+                                </span>
+                                {{ answer.question.question_text }}
+                            </h6>
+                            <span class="badge {% if answer.is_correct %}bg-success{% else %}bg-danger{% endif %}">
+                                {% if answer.is_correct %}
+                                    <i class="fas fa-check me-1"></i>Correct
+                                {% else %}
+                                    <i class="fas fa-times me-1"></i>Incorrect
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        <div class="options-review">
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="option {% if answer.question.correct_answer == 'A' %}correct-answer{% endif %} {% if answer.selected_answer == 'A' %}selected-answer{% endif %}">
+                                        <strong>A)</strong> {{ answer.question.option_a }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="option {% if answer.question.correct_answer == 'B' %}correct-answer{% endif %} {% if answer.selected_answer == 'B' %}selected-answer{% endif %}">
+                                        <strong>B)</strong> {{ answer.question.option_b }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="option {% if answer.question.correct_answer == 'C' %}correct-answer{% endif %} {% if answer.selected_answer == 'C' %}selected-answer{% endif %}">
+                                        <strong>C)</strong> {{ answer.question.option_c }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="option {% if answer.question.correct_answer == 'D' %}correct-answer{% endif %} {% if answer.selected_answer == 'D' %}selected-answer{% endif %}">
+                                        <strong>D)</strong> {{ answer.question.option_d }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <strong>Your Answer:</strong> {{ answer.selected_answer }})
+                                {% if answer.is_correct %}
+                                    <span class="text-success">✓</span>
+                                {% else %}
+                                    <span class="text-danger">✗</span>
+                                {% endif %}
+                                {% if not answer.is_correct %}
+                                    <br><strong>Correct Answer:</strong> {{ answer.question.correct_answer }})
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <div class="d-flex gap-3 justify-content-center mt-4">
+                        <a href="{{ url_for('course_detail', course_id=attempt.quiz.course.id) }}" class="btn btn-primary btn-lg px-4 py-2">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Course
+                        </a>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-lg px-4 py-2">
+                            <i class="fas fa-home me-2"></i>Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Quiz Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="text-primary"><i class="fas fa-book me-2"></i>Course</h6>
+                        <p class="mb-0">{{ attempt.quiz.course.title }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-primary"><i class="fas fa-user me-2"></i>Student</h6>
+                        <p class="mb-0">{{ attempt.user.first_name }} {{ attempt.user.last_name }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-primary"><i class="fas fa-calendar me-2"></i>Completed</h6>
+                        <p class="mb-0">{{ attempt.completed_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-primary"><i class="fas fa-clock me-2"></i>Time Limit</h6>
+                        <p class="mb-0">{{ attempt.quiz.time_limit_minutes }} minutes</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-primary"><i class="fas fa-percentage me-2"></i>Passing Score</h6>
+                        <p class="mb-0">{{ attempt.quiz.passing_score }}%</p>
+                    </div>
+                    
+                    {% if attempt.passed %}
+                    <div class="alert alert-success">
+                        <i class="fas fa-trophy me-2"></i>
+                        <strong>Congratulations!</strong> You passed this quiz!
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Keep studying!</strong> Review the questions and try to improve for next time.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card-header {
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+}
+
+.question-review {
+    transition: all 0.3s ease;
+}
+
+.option {
+    padding: 0.5rem;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+}
+
+.correct-answer {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.selected-answer {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.progress {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    border-radius: 15px;
+    font-weight: 600;
+    line-height: 25px;
+}
+
+.btn-lg {
+    border-radius: 8px;
+    font-weight: 600;
+}
+</style>
+{% endblock %}

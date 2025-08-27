@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Quiz - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                    Delete Quiz
+                </h1>
+                <p class="text-muted mb-0">{{ quiz.title }} - {{ course.title }}</p>
+            </div>
+
+            <!-- Warning Card -->
+            <div class="card border-0 shadow-sm border-danger">
+                <div class="card-header bg-danger text-white text-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-trash me-2"></i>Confirm Quiz Deletion
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="warning-icon mb-4">
+                        <i class="fas fa-exclamation-triangle text-danger" style="font-size: 4rem;"></i>
+                    </div>
+                    
+                    <h5 class="text-danger mb-3">Are you sure you want to delete this quiz?</h5>
+                    
+                    <div class="alert alert-danger" role="alert">
+                        <strong>Warning:</strong> This action cannot be undone!
+                    </div>
+
+                    <!-- Quiz Information -->
+                    <div class="quiz-info mb-4">
+                        <h6 class="text-muted mb-3">Quiz Details:</h6>
+                        <div class="row text-start">
+                            <div class="col-md-6">
+                                <p><strong>Title:</strong> {{ quiz.title }}</p>
+                                <p><strong>Questions:</strong> {{ quiz.questions|length }}</p>
+                                <p><strong>Time Limit:</strong> {{ quiz.time_limit_minutes }} minutes</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Passing Score:</strong> {{ quiz.passing_score }}%</p>
+                                <p><strong>Total Attempts:</strong> {{ quiz.attempts|length }}</p>
+                                <p><strong>Created:</strong> {{ quiz.created_at.strftime('%B %d, %Y') }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Loss Warning -->
+                    <div class="data-loss-warning mb-4">
+                        <h6 class="text-danger mb-3">The following data will be permanently deleted:</h6>
+                        <div class="row text-start">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-times text-danger me-2"></i>All quiz questions</li>
+                                    <li><i class="fas fa-times text-danger me-2"></i>All student attempts</li>
+                                    <li><i class="fas fa-times text-danger me-2"></i>All student answers</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-times text-danger me-2"></i>All quiz scores</li>
+                                    <li><i class="fas fa-times text-danger me-2"></i>All performance data</li>
+                                    <li><i class="fas fa-times text-danger me-2"></i>All quiz statistics</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confirmation Form -->
+                    <form method="POST">
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="confirmDelete" required>
+                            <label class="form-check-label" for="confirmDelete">
+                                I understand that this action cannot be undone and all quiz data will be permanently deleted
+                            </label>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg" id="deleteBtn" disabled>
+                                <i class="fas fa-trash me-2"></i>Delete Quiz Permanently
+                            </button>
+                            <a href="{{ url_for('manage_quizzes', course_id=course.id) }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Cancel and Go Back
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Alternative Actions -->
+            <div class="text-center mt-4">
+                <p class="text-muted mb-2">Instead of deleting, consider:</p>
+                <div class="btn-group" role="group">
+                    <a href="{{ url_for('edit_quiz_answers', quiz_id=quiz.id) }}" class="btn btn-outline-warning">
+                        <i class="fas fa-edit me-1"></i>Edit Quiz Answers
+                    </a>
+                    <a href="{{ url_for('quiz_results_overview', quiz_id=quiz.id) }}" class="btn btn-outline-info">
+                        <i class="fas fa-chart-bar me-1"></i>View Results
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.warning-icon {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.quiz-info {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.data-loss-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.data-loss-warning ul li {
+    margin-bottom: 0.5rem;
+}
+
+.form-check-input:checked {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.form-check-input:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+.card {
+    border-radius: 15px;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+</style>
+
+<script>
+// Enable delete button only when checkbox is checked
+document.getElementById('confirmDelete').addEventListener('change', function() {
+    document.getElementById('deleteBtn').disabled = !this.checked;
+});
+
+// Additional confirmation on form submit
+document.querySelector('form').addEventListener('submit', function(e) {
+    if (!confirm('Are you absolutely sure you want to delete this quiz? This action cannot be undone!')) {
+        e.preventDefault();
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Assignments - {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('teacher_dashboard') }}">Teacher Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('manage_course', course_id=course.id) }}">{{ course.title }}</a></li>
+            <li class="breadcrumb-item active">Manage Assignments</li>
+        </ol>
+    </nav>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>📚 Assignment Management</h2>
+            <p class="text-muted">Course: {{ course.title }}</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('create_assignment', course_id=course.id) }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create New Assignment
+            </a>
+            <a href="{{ url_for('manage_course', course_id=course.id) }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Course
+            </a>
+        </div>
+    </div>
+
+    {% if assignments %}
+        <div class="row">
+            {% for assignment in assignments %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 {% if not assignment.is_active %}border-warning{% endif %}">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">{{ assignment.title }}</h6>
+                        <span class="badge bg-{{ 'success' if assignment.is_active else 'warning' }}">
+                            {{ 'Active' if assignment.is_active else 'Inactive' }}
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text text-muted small">{{ assignment.description[:100] }}{% if assignment.description|length > 100 %}...{% endif %}</p>
+                        
+                        <div class="row text-center mb-3">
+                            <div class="col-3">
+                                <div class="border rounded p-2">
+                                    <div class="fw-bold text-primary">{{ assignment.submission_count }}</div>
+                                    <small class="text-muted">Total</small>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="border rounded p-2">
+                                    <div class="fw-bold text-success">{{ assignment.graded_count }}</div>
+                                    <small class="text-muted">Graded</small>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="border rounded p-2">
+                                    <div class="fw-bold text-warning">{{ assignment.pending_count }}</div>
+                                    <small class="text-muted">Pending</small>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="border rounded p-2">
+                                    <div class="fw-bold text-danger">{{ assignment.late_count }}</div>
+                                    <small class="text-muted">Late</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar"></i> Due: {{ assignment.due_date.strftime('%b %d, %Y at %I:%M %p') }}
+                            </small><br>
+                            <small class="text-muted">
+                                <i class="fas fa-star"></i> Max Score: {{ assignment.max_score }} points
+                            </small><br>
+                            <small class="text-muted">
+                                <i class="fas fa-tag"></i> Type: {{ assignment.assignment_type|title }}
+                            </small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('view_submissions', assignment_id=assignment.id) }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-eye"></i> View Submissions
+                            </a>
+                            <a href="{{ url_for('assignment_analytics', assignment_id=assignment.id) }}" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-chart-bar"></i> Analytics
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group w-100" role="group">
+                            <a href="{{ url_for('edit_assignment', assignment_id=assignment.id) }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{{ url_for('toggle_assignment_status', assignment_id=assignment.id) }}" class="btn btn-outline-{{ 'warning' if assignment.is_active else 'success' }} btn-sm">
+                                <i class="fas fa-{{ 'pause' if assignment.is_active else 'play' }}"></i> 
+                                {{ 'Deactivate' if assignment.is_active else 'Activate' }}
+                            </a>
+                            <a href="{{ url_for('delete_assignment', assignment_id=assignment.id) }}" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-clipboard-list fa-4x text-muted"></i>
+            </div>
+            <h4 class="text-muted">No Assignments Yet</h4>
+            <p class="text-muted">Create your first assignment to get started!</p>
+            <a href="{{ url_for('create_assignment', course_id=course.id) }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create First Assignment
+            </a>
+        </div>
+    {% endif %}
+
+    <!-- Quick Stats -->
+    {% if assignments %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-pie"></i> Assignment Overview</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="border rounded p-3">
+                                <div class="h3 text-primary">{{ assignments|length }}</div>
+                                <div class="text-muted">Total Assignments</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded p-3">
+                                <div class="h3 text-success">{{ assignments|selectattr('is_active')|list|length }}</div>
+                                <div class="text-muted">Active Assignments</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded p-3">
+                                <div class="h3 text-warning">{{ assignments|rejectattr('is_active')|list|length }}</div>
+                                <div class="text-muted">Inactive Assignments</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded p-3">
+                                <div class="h3 text-info">{{ assignments|sum(attribute='submission_count') }}</div>
+                                <div class="text-muted">Total Submissions</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

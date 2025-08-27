@@ -77,27 +77,53 @@
                 <div class="card-body">
                     {% if enrolled_courses %}
                     <div class="course-list">
-                        {% for enrollment in enrolled_courses %}
+                        {% for course in enrolled_courses %}
                         <div class="course-item">
                             <div class="course-info">
-                                <h6 class="course-name">{{ enrollment.course.title }}</h6>
+                                <h6 class="course-name">{{ course.title if course else 'Unknown Course' }}</h6>
                                 <p class="course-instructor">
-                                    <i class="fas fa-chalkboard-teacher me-1"></i>{{ enrollment.course.instructor }}
+                                    <i class="fas fa-chalkboard-teacher me-1"></i>{{ course.instructor if course else 'Unknown Instructor' }}
                                 </p>
                                 <div class="course-progress">
                                     <div class="progress-info">
                                         <span class="progress-text">Progress</span>
-                                        <span class="progress-percentage">{{ enrollment.progress }}%</span>
+                                        <span class="progress-percentage">
+                                            {% set progress = user.get_course_progress(course.id) if user and course else 0 %}
+                                            {{ "%.0f"|format(progress) }}%
+                                        </span>
                                     </div>
                                     <div class="progress">
-                                        <div class="progress-bar" role="progressbar" style="width: {{ enrollment.progress }}%"></div>
+                                        <div class="progress-bar" role="progressbar" 
+                                             style="width: {{ progress }}%"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="course-actions">
-                                <a href="{{ url_for('course_detail', course_id=enrollment.course.id) }}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-play me-1"></i>Continue
-                                </a>
+                                {% if course and course.id %}
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ url_for('course_detail', course_id=course.id) }}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-play me-1"></i>Continue
+                                        </a>
+                                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                                            <span class="visually-hidden">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="{{ url_for('course_detail', course_id=course.id) }}">
+                                                <i class="fas fa-book-open me-2"></i>Course Overview
+                                            </a></li>
+                                            <li><a class="dropdown-item" href="{{ url_for('view_grades') }}">
+                                                <i class="fas fa-chart-line me-2"></i>My Grades
+                                            </a></li>
+                                            <li><a class="dropdown-item" href="{{ url_for('submit_assignment', assignment_id=0) }}">
+                                                <i class="fas fa-upload me-2"></i>Submit Assignment
+                                            </a></li>
+                                        </ul>
+                                    </div>
+                                {% else %}
+                                    <button class="btn btn-secondary btn-sm" disabled>
+                                        <i class="fas fa-exclamation-triangle me-1"></i>Course Unavailable
+                                    </button>
+                                {% endif %}
                             </div>
                         </div>
                         {% endfor %}
@@ -118,6 +144,28 @@
 
         <!-- Sidebar -->
         <div class="col-lg-4">
+            <!-- Study Resources -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tools me-2"></i>Study Resources
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('view_grades') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-chart-line me-2"></i>View My Grades
+                        </a>
+                        <a href="{{ url_for('courses') }}" class="btn btn-outline-success">
+                            <i class="fas fa-search me-2"></i>Browse More Courses
+                        </a>
+                        <a href="{{ url_for('profile') }}" class="btn btn-outline-info">
+                            <i class="fas fa-user me-2"></i>My Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+
             <!-- Recent Activities -->
             <div class="card mb-4">
                 <div class="card-header">

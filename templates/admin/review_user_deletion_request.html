@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block title %}Review User Deletion Request - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="mb-0">
+                    <i class="fas fa-user-times text-danger me-2"></i>Review User Deletion Request
+                </h1>
+                <a href="{{ url_for('manage_user_deletion_requests') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to User Deletion Requests
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Information -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Deletion Request Details
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Request ID:</strong> #{{ deletion_request.id }}</p>
+                            <p><strong>Status:</strong> 
+                                {% if deletion_request.status == 'pending' %}
+                                    <span class="badge bg-warning">Pending</span>
+                                {% elif deletion_request.status == 'approved' %}
+                                    <span class="badge bg-success">Approved</span>
+                                {% elif deletion_request.status == 'denied' %}
+                                    <span class="badge bg-danger">Denied</span>
+                                {% endif %}
+                            </p>
+                            <p><strong>Requested:</strong> {{ deletion_request.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            {% if deletion_request.reviewed_by %}
+                                <p><strong>Reviewed By:</strong> {{ deletion_request.reviewer.first_name }} {{ deletion_request.reviewer.last_name }}</p>
+                                <p><strong>Reviewed:</strong> {{ deletion_request.reviewed_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                            {% else %}
+                                <p><strong>Reviewed By:</strong> <span class="text-muted">Not reviewed yet</span></p>
+                                <p><strong>Reviewed:</strong> <span class="text-muted">Not reviewed yet</span></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Information -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user me-2"></i>User Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Username:</strong> {{ deletion_request.user.username }}</p>
+                            <p><strong>Email:</strong> {{ deletion_request.user.email }}</p>
+                            <p><strong>Role:</strong> {{ deletion_request.user.role|title }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Name:</strong> {{ deletion_request.user.first_name }} {{ deletion_request.user.last_name }}</p>
+                            <p><strong>Member Since:</strong> {{ deletion_request.user.created_at.strftime('%B %d, %Y') }}</p>
+                            <p><strong>Status:</strong> <span class="badge bg-success">Active</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deletion Reason -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-comment me-2"></i>Reason for Deletion
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">{{ deletion_request.reason }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Data Summary -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-info">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-database me-2"></i>Data That Will Be Deleted
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <h4 class="text-danger mb-1">{{ deletion_request.user.grades|length }}</h4>
+                            <small class="text-muted">Grades</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="text-danger mb-1">{{ deletion_request.user.enrollments|length }}</h4>
+                            <small class="text-muted">Course Enrollments</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="text-danger mb-1">{{ deletion_request.user.assignment_submissions|length if deletion_request.user.assignment_submissions else 0 }}</h4>
+                            <small class="text-muted">Assignment Submissions</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="text-danger mb-1">{{ deletion_request.user.quiz_attempts|length if deletion_request.user.quiz_attempts else 0 }}</h4>
+                            <small class="text-muted">Quiz Attempts</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Form -->
+    {% if deletion_request.status == 'pending' %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-gavel me-2"></i>Review Decision
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="admin_notes" class="form-label">Admin Notes</label>
+                            <textarea class="form-control" id="admin_notes" name="admin_notes" rows="4" 
+                                      placeholder="Provide notes about your decision (optional)..."></textarea>
+                            <div class="form-text">
+                                These notes will be recorded with your decision and may be shared with the user.
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" name="action" value="deny" class="btn btn-warning">
+                                <i class="fas fa-times me-2"></i>Deny Request
+                            </button>
+                            <button type="submit" name="action" value="approve" class="btn btn-danger">
+                                <i class="fas fa-check me-2"></i>Approve & Delete Account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Review Result -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clipboard-check me-2"></i>Review Result
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-{{ 'success' if deletion_request.status == 'approved' else 'danger' }}" role="alert">
+                        <h6 class="alert-heading">
+                            {% if deletion_request.status == 'approved' %}
+                                <i class="fas fa-check-circle me-2"></i>Request Approved
+                            {% else %}
+                                <i class="fas fa-times-circle me-2"></i>Request Denied
+                            {% endif %}
+                        </h6>
+                        {% if deletion_request.admin_notes %}
+                            <p class="mb-0"><strong>Admin Notes:</strong> {{ deletion_request.admin_notes }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Warning -->
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-danger" role="alert">
+                <h6 class="alert-heading">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Important Warning
+                </h6>
+                <p class="mb-0">
+                    <strong>If approved:</strong> The user's account and all associated data will be permanently deleted. 
+                    This action cannot be undone. Please ensure this is the correct decision before proceeding.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Confirmation for approve action
+document.querySelector('button[value="approve"]').addEventListener('click', function(e) {
+    if (!confirm('Are you absolutely sure you want to approve this deletion request? The user account and all data will be permanently deleted.')) {
+        e.preventDefault();
+        return;
+    }
+    
+    if (!confirm('Final confirmation: This action cannot be undone. The user will lose access to all their data permanently. Continue?')) {
+        e.preventDefault();
+        return;
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,623 @@
+{% extends "base.html" %}
+
+{% block title %}{{ quiz.title }} - Quiz{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('course_detail', course_id=quiz.course.id) }}">{{ quiz.course.title }}</a></li>
+            <li class="breadcrumb-item active">{{ quiz.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><i class="fas fa-question-circle me-2"></i>{{ quiz.title }}</h4>
+                        <div class="text-end">
+                            <div class="small">Passing Score: {{ quiz.passing_score }}%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Live Countdown Timer -->
+                <div class="timer-container bg-warning text-dark py-2">
+                    <div class="container">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-clock me-2"></i>
+                                <span class="fw-bold">Time Remaining:</span>
+                            </div>
+                            <div class="countdown-display">
+                                <span id="timer" class="h4 mb-0 fw-bold text-danger"></span>
+                            </div>
+                        </div>
+                        <!-- Time Progress Bar -->
+                        <div class="mt-2">
+                            <div class="progress" style="height: 8px;">
+                                <div id="timeProgress" class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        
+                                                    <!-- Timer Info -->
+                            <div class="mt-2 text-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Timer will auto-submit when time expires
+                                </small>
+                            </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" id="quizForm">
+                        {% for question in quiz.questions %}
+                        <div class="question-container mb-4 p-3 border rounded">
+                            <h5 class="text-primary mb-3">
+                                <span class="badge bg-primary me-2">{{ loop.index }}</span>
+                                {{ question.question_text }}
+                            </h5>
+                            
+                            <div class="options">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" 
+                                        name="question_{{ question.id }}" 
+                                        id="q{{ question.id }}_a" 
+                                        value="A" required>
+                                    <label class="form-check-label" for="q{{ question.id }}_a">
+                                        <strong>A)</strong> {{ question.option_a }}
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" 
+                                        name="question_{{ question.id }}" 
+                                        id="q{{ question.id }}_b" 
+                                        value="B" required>
+                                    <label class="form-check-label" for="q{{ question.id }}_b">
+                                        <strong>B)</strong> {{ question.option_b }}
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" 
+                                        name="question_{{ question.id }}" 
+                                        id="q{{ question.id }}_c" 
+                                        value="C" required>
+                                    <label class="form-check-label" for="q{{ question.id }}_c">
+                                        <strong>C)</strong> {{ question.option_c }}
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" 
+                                        name="question_{{ question.id }}" 
+                                        id="q{{ question.id }}_d" 
+                                        value="D" required>
+                                    <label class="form-check-label" for="q{{ question.id }}_d">
+                                        <strong>D)</strong> {{ question.option_d }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="d-flex gap-3 justify-content-center">
+                            <button type="submit" class="btn btn-success btn-lg px-5 py-3">
+                                <i class="fas fa-paper-plane me-2"></i>Submit Quiz
+                            </button>
+                            <a href="{{ url_for('course_detail', course_id=quiz.course.id) }}" class="btn btn-secondary btn-lg px-5 py-3">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Quiz Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="text-primary"><i class="fas fa-book me-2"></i>Course</h6>
+                        <p class="mb-0">{{ quiz.course.title }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-primary"><i class="fas fa-clock me-2"></i>Time Limit</h6>
+                        <p class="mb-0">{{ quiz.time_limit_minutes }} minutes</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-primary"><i class="fas fa-percentage me-2"></i>Passing Score</h6>
+                        <p class="mb-0">{{ quiz.passing_score }}%</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-primary"><i class="fas fa-question-circle me-2"></i>Questions</h6>
+                        <p class="mb-0">{{ quiz.questions|length }} questions</p>
+                    </div>
+                    
+                    <div class="alert alert-warning small">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Important:</strong> Make sure to answer all questions before submitting. You can only take this quiz once.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Timer (visible when scrolling) -->
+<div id="floatingTimer" class="floating-timer d-none">
+    <div class="floating-timer-content">
+        <i class="fas fa-clock me-2"></i>
+        <span id="floatingTimerText" class="fw-bold"></span>
+    </div>
+</div>
+
+<!-- Quiz Submission Modal -->
+<div class="modal fade" id="submissionModal" tabindex="-1" aria-labelledby="submissionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="submissionModalLabel">
+                    <i class="fas fa-question-circle me-2"></i>Confirm Quiz Submission
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to submit this quiz?</p>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>You cannot change your answers after submission.</strong>
+                </div>
+                <p>Please review your answers before confirming.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-primary" onclick="submitQuiz()">
+                    <i class="fas fa-check me-2"></i>Yes, Submit Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card-header {
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+}
+
+/* Timer Styles */
+.timer-container {
+    border-top: 1px solid rgba(0,0,0,0.1);
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.countdown-display {
+    min-width: 120px;
+    text-align: center;
+}
+
+#timer {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Pulse animation for urgent warnings */
+.pulse {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Timer warning states */
+#timer.text-warning {
+    color: #ffc107 !important;
+    font-weight: bold;
+}
+
+#timer.text-danger {
+    color: #dc3545 !important;
+    font-weight: bold;
+}
+
+.question-container {
+    background-color: #f8f9fa;
+    border-color: #dee2e6 !important;
+    transition: all 0.3s ease;
+}
+
+.question-container:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd !important;
+}
+
+.form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.form-check-label {
+    cursor: pointer;
+    padding-left: 0.5rem;
+}
+
+.btn-lg {
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.sticky-top {
+    z-index: 1020;
+}
+
+/* Floating Timer */
+.floating-timer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #ffc107, #ff8c00);
+    color: #000;
+    padding: 12px 20px;
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 1050;
+    transition: all 0.3s ease;
+    border: 2px solid #fff;
+}
+
+.floating-timer-content {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.floating-timer:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.floating-timer.warning {
+    background: linear-gradient(135deg, #ffc107, #ff6b35);
+}
+
+.floating-timer.danger {
+    background: linear-gradient(135deg, #dc3545, #ff4757);
+    animation: pulse 1s infinite;
+}
+
+/* Responsive timer adjustments */
+@media (max-width: 768px) {
+    .timer-container .container {
+        padding: 0 15px;
+    }
+    
+    .countdown-display {
+        min-width: 100px;
+    }
+    
+    #timer {
+        font-size: 1.2rem !important;
+        letter-spacing: 1px;
+    }
+    
+    .floating-timer {
+        top: 10px;
+        right: 10px;
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+}
+</style>
+
+<script>
+// Quiz Timer Countdown
+class QuizTimer {
+    constructor(minutes) {
+        this.totalSeconds = minutes * 60;
+        this.remainingSeconds = this.totalSeconds;
+        this.isRunning = false;
+        this.timerInterval = null;
+        this.init();
+    }
+    
+    init() {
+        this.setupWarningLevels();
+        this.updateDisplay();
+        this.start();
+    }
+    
+    start() {
+        this.isRunning = true;
+        
+        // Clear any existing interval first
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+        }
+        
+        this.timerInterval = setInterval(() => {
+            this.remainingSeconds--;
+            this.updateDisplay();
+            
+            if (this.remainingSeconds <= 0) {
+                this.expire();
+            }
+        }, 1000);
+    }
+    
+    updateDisplay() {
+        const hours = Math.floor(this.remainingSeconds / 3600);
+        const minutes = Math.floor((this.remainingSeconds % 3600) / 60);
+        const seconds = this.remainingSeconds % 60;
+        
+        const timeString = hours > 0 ? 
+            `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}` :
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        // Update main timer
+        const timerElement = document.getElementById('timer');
+        if (timerElement) {
+            timerElement.textContent = timeString;
+        }
+        
+        // Update floating timer
+        this.updateFloatingTimer(timeString);
+        
+        // Update progress bar
+        this.updateProgressBar();
+        
+        // Update warning colors based on time remaining
+        this.updateWarningColors();
+    }
+    
+    setupWarningLevels() {
+        // Add warning levels for different time thresholds
+        this.warningLevels = [
+            { threshold: this.totalSeconds * 0.25, class: 'text-warning' }, // 25% remaining
+            { threshold: this.totalSeconds * 0.1, class: 'text-danger' },   // 10% remaining
+            { threshold: 60, class: 'text-danger pulse' }                   // Last minute
+        ];
+    }
+    
+    updateProgressBar() {
+        const progressBar = document.getElementById('timeProgress');
+        if (!progressBar) return;
+        
+        const percentage = (this.remainingSeconds / this.totalSeconds) * 100;
+        progressBar.style.width = percentage + '%';
+        
+        // Update progress bar color based on time remaining
+        progressBar.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+        
+        if (percentage > 25) {
+            progressBar.classList.add('bg-success');
+        } else if (percentage > 10) {
+            progressBar.classList.add('bg-warning');
+        } else {
+            progressBar.classList.add('bg-danger');
+        }
+    }
+    
+    updateFloatingTimer(timeString) {
+        const floatingTimer = document.getElementById('floatingTimer');
+        const floatingTimerText = document.getElementById('floatingTimerText');
+        
+        if (!floatingTimer || !floatingTimerText) return;
+        
+        // Show floating timer after scrolling
+        if (window.scrollY > 100) {
+            floatingTimer.classList.remove('d-none');
+        } else {
+            floatingTimer.classList.add('d-none');
+        }
+        
+        // Update floating timer text
+        floatingTimerText.textContent = timeString;
+        
+        // Update floating timer styling based on time remaining
+        const percentage = (this.remainingSeconds / this.totalSeconds) * 100;
+        floatingTimer.classList.remove('warning', 'danger');
+        
+        if (percentage <= 25 && percentage > 10) {
+            floatingTimer.classList.add('warning');
+        } else if (percentage <= 10) {
+            floatingTimer.classList.add('danger');
+        }
+    }
+    
+    updateWarningColors() {
+        const timerElement = document.getElementById('timer');
+        if (!timerElement) return;
+        
+        // Safety check for warningLevels
+        if (!this.warningLevels || !Array.isArray(this.warningLevels)) {
+            console.warn('Warning levels not properly initialized, skipping warning colors');
+            return;
+        }
+        
+        // Remove all warning classes
+        timerElement.classList.remove('text-warning', 'text-danger', 'pulse');
+        
+        // Apply appropriate warning class
+        for (const level of this.warningLevels) {
+            if (this.remainingSeconds <= level.threshold) {
+                timerElement.classList.add(level.class);
+                break;
+            }
+        }
+        
+        // Add urgent warning for last 30 seconds
+        if (this.remainingSeconds <= 30) {
+            timerElement.classList.add('pulse', 'text-danger');
+        }
+    }
+    
+    expire() {
+        this.stop();
+        this.showExpirationMessage();
+        this.autoSubmit();
+    }
+    
+    stop() {
+        this.isRunning = false;
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+        }
+    }
+    
+    showExpirationMessage() {
+        const timerElement = document.getElementById('timer');
+        if (timerElement) {
+            timerElement.textContent = 'TIME EXPIRED!';
+            timerElement.classList.add('text-danger', 'pulse');
+        }
+        
+        // Show alert
+        alert('Time has expired! Your quiz will be submitted automatically.');
+    }
+    
+    autoSubmit() {
+        // Auto-submit the form after a short delay
+        setTimeout(() => {
+            const form = document.getElementById('quizForm');
+            if (form) {
+                form.submit();
+            }
+        }, 2000);
+    }
+    
+    getRemainingTime() {
+        return this.remainingSeconds;
+    }
+    
+    getTimeString() {
+        const hours = Math.floor(this.remainingSeconds / 3600);
+        const minutes = Math.floor((this.remainingSeconds % 3600) / 60);
+        const seconds = this.remainingSeconds % 60;
+        
+        if (hours > 0) {
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        } else {
+            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+    }
+    
+    // Pause/resume functionality removed for production quizzes
+    // Students cannot pause the timer to prevent cheating
+}
+
+// Initialize timer when page loads
+let quizTimer;
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        // Get time limit from quiz data or use default
+        const timeLimitMinutes = {{ quiz.time_limit_minutes if quiz and quiz.time_limit_minutes else 30 }};
+        
+        // Create and start the timer
+        quizTimer = new QuizTimer(timeLimitMinutes);
+        
+        // Add scroll listener for floating timer
+        window.addEventListener('scroll', () => {
+            if (quizTimer) {
+                quizTimer.updateFloatingTimer(quizTimer.getTimeString());
+            }
+        });
+        
+    } catch (error) {
+        console.error('Error creating timer:', error);
+    }
+});
+
+// Form validation
+document.getElementById('quizForm').addEventListener('submit', function(e) {
+    const questions = document.querySelectorAll('.question-container');
+    let allAnswered = true;
+    
+    questions.forEach((question, index) => {
+        const radioButtons = question.querySelectorAll('input[type="radio"]');
+        const answered = Array.from(radioButtons).some(radio => radio.checked);
+        
+        if (!answered) {
+            allAnswered = false;
+            question.style.borderColor = '#dc3545';
+            question.style.backgroundColor = '#f8d7da';
+        } else {
+            question.style.borderColor = '#dee2e6';
+            question.style.backgroundColor = '#f8f9fa';
+        }
+    });
+    
+    if (!allAnswered) {
+        e.preventDefault();
+        alert('Please answer all questions before submitting the quiz.');
+        return false;
+    }
+    
+    // Check if time has expired
+    if (quizTimer && quizTimer.getRemainingTime() <= 0) {
+        e.preventDefault();
+        alert('Time has expired! Your quiz will be submitted automatically.');
+        return false;
+    }
+    
+    // Confirm submission
+    // Show confirmation modal instead of browser confirm
+    const submissionModal = new bootstrap.Modal(document.getElementById('submissionModal'));
+    submissionModal.show();
+    return false;
+});
+
+function submitQuiz() {
+    // Hide the submission modal
+    const submissionModal = new bootstrap.Modal(document.getElementById('submissionModal'));
+    submissionModal.hide();
+    
+    // Stop the timer
+    if (quizTimer) {
+        quizTimer.stop();
+    }
+    
+    // Disable submit button to prevent double submission
+    const submitBtn = document.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
+    
+    // Submit the form
+    document.getElementById('quizForm').submit();
+});
+
+// Production-ready quiz timer - no debug functions
+</script>
+{% endblock %}

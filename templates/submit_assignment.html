@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Submit Assignment - {{ assignment.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('course_detail', course_id=assignment.course.id) }}">{{ assignment.course.title }}</a></li>
+            <li class="breadcrumb-item active">Submit Assignment</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Submit Assignment</h2>
+                    <h5 class="text-muted">{{ assignment.title }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6>Assignment Details:</h6>
+                        <p><strong>Course:</strong> {{ assignment.course.title }}</p>
+                        <p><strong>Type:</strong> {{ assignment.assignment_type.title() }}</p>
+                        <p><strong>Due Date:</strong> {{ assignment.due_date.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                        <p><strong>Max Score:</strong> {{ assignment.max_score }} points</p>
+                        
+                        {% if assignment.description %}
+                        <p><strong>Description:</strong><br>{{ assignment.description }}</p>
+                        {% endif %}
+                        
+                        {% if assignment.instructions %}
+                        <p><strong>Instructions:</strong><br>{{ assignment.instructions }}</p>
+                        {% endif %}
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="form-group mb-3">
+                            <label for="submission_text" class="form-label">Text Submission:</label>
+                            <textarea class="form-control" id="submission_text" name="submission_text" rows="8" 
+                                      placeholder="Type your assignment here..."></textarea>
+                            <div class="form-text">You can submit text, upload a file, or both.</div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="file" class="form-label">File Upload (Optional):</label>
+                            <input type="file" class="form-control" id="file" name="file" 
+                                   accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.zip,.rar">
+                            <div class="form-text">Supported formats: PDF, DOC, DOCX, TXT, Images, Archives</div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Note:</strong> You must provide either text submission or upload a file. 
+                            You can submit both if desired.
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('course_detail', course_id=assignment.course.id) }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Course
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Submit Assignment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Assignment Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Due Date Status:</h6>
+                        {% set time_left = assignment.due_date - now %}
+                        {% if time_left.total_seconds() > 0 %}
+                            <span class="badge bg-success">On Time</span>
+                            <small class="d-block text-muted mt-1">
+                                Due in {{ time_left.days }} days, {{ (time_left.seconds // 3600) }} hours
+                            </small>
+                        {% else %}
+                            <span class="badge bg-danger">Overdue</span>
+                            <small class="d-block text-muted mt-1">
+                                {{ abs(time_left.days) }} days overdue
+                            </small>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Submission Requirements:</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success"></i> Text or file required</li>
+                            <li><i class="fas fa-check text-success"></i> One submission per student</li>
+                            <li><i class="fas fa-check text-success"></i> Late submissions accepted</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Grading:</h6>
+                        <p class="mb-1"><strong>Max Score:</strong> {{ assignment.max_score }} points</p>
+                        <p class="mb-1"><strong>Grading Scale:</strong></p>
+                        <ul class="list-unstyled small">
+                            <li>A: 90-100% ({{ (assignment.max_score * 0.9) | round(1) }}-{{ assignment.max_score }} points)</li>
+                            <li>B: 80-89% ({{ (assignment.max_score * 0.8) | round(1) }}-{{ (assignment.max_score * 0.89) | round(1) }} points)</li>
+                            <li>C: 70-79% ({{ (assignment.max_score * 0.7) | round(1) }}-{{ (assignment.max_score * 0.79) | round(1) }} points)</li>
+                            <li>D: 60-69% ({{ (assignment.max_score * 0.6) | round(1) }}-{{ (assignment.max_score * 0.69) | round(1) }} points)</li>
+                            <li>F: Below 60% (Below {{ (assignment.max_score * 0.6) | round(1) }} points)</li>
+                        </ul>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Important:</strong> Once submitted, you cannot edit your submission. 
+                        Make sure to review everything before submitting.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

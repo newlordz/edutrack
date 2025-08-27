@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block title %}Request Account Deletion - EduTrack{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="mb-0">
+                    <i class="fas fa-user-times text-danger me-2"></i>Request Account Deletion
+                </h1>
+                <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Profile
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning Alert -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-danger" role="alert">
+                <h5 class="alert-heading">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Important Notice
+                </h5>
+                <p class="mb-0">
+                    <strong>Account: {{ user.username }}</strong><br>
+                    You are requesting deletion of your account. This action requires admin approval and cannot be undone once approved.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Information -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Account Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Username:</strong> {{ user.username }}</p>
+                            <p><strong>Email:</strong> {{ user.email }}</p>
+                            <p><strong>Role:</strong> {{ user.role|title }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                            <p><strong>Member Since:</strong> {{ user.created_at.strftime('%B %d, %Y') }}</p>
+                            <p><strong>Status:</strong> <span class="badge bg-success">Active</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deletion Request Form -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>Deletion Request Form
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="reason" class="form-label">Reason for Account Deletion *</label>
+                            <textarea class="form-control" id="reason" name="reason" rows="5" 
+                                      placeholder="Please provide a detailed reason for why you want to delete your account..." required></textarea>
+                            <div class="form-text">
+                                Be specific about why you want to delete your account. This will help admins make an informed decision.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">What happens next?</label>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-clock text-warning me-2"></i>Your request will be reviewed by an admin</li>
+                                <li><i class="fas fa-check-circle text-success me-2"></i>If approved, your account and all related data will be permanently deleted</li>
+                                <li><i class="fas fa-times-circle text-danger me-2"></i>If denied, you'll receive feedback and your account will remain</li>
+                                <li><i class="fas fa-bell text-info me-2"></i>You'll be notified of the admin's decision</li>
+                            </ul>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">What will be deleted?</label>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-trash text-danger me-2"></i>Your user profile and login credentials</li>
+                                <li><i class="fas fa-trash text-danger me-2"></i>All course enrollments and progress</li>
+                                <li><i class="fas fa-trash text-danger me-2"></i>All assignment submissions and grades</li>
+                                <li><i class="fas fa-trash text-danger me-2"></i>All quiz attempts and results</li>
+                                <li><i class="fas fa-trash text-danger me-2"></i>All study progress and materials</li>
+                            </ul>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('profile') }}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="button" class="btn btn-danger" onclick="showConfirmationModal()">
+                                <i class="fas fa-paper-plane me-2"></i>Submit Deletion Request
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="confirmationModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Confirm Deletion Request
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you absolutely sure you want to submit this account deletion request?</p>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>This action cannot be undone once approved.</strong>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="showFinalConfirmation()">
+                        <i class="fas fa-check me-2"></i>Yes, Submit Request
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Confirmation Modal -->
+    <div class="modal fade" id="finalConfirmationModal" tabindex="-1" aria-labelledby="finalConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="finalConfirmationModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Final Confirmation
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>You understand that if approved, your account and all data will be permanently deleted.</p>
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>This action cannot be undone!</strong>
+                    </div>
+                    <p>Do you want to continue with the deletion request?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>No, Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="submitForm()">
+                        <i class="fas fa-check me-2"></i>Yes, Continue
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alternative Options -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-info">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>Consider These Alternatives
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-pause text-warning me-2"></i>Account Deactivation</h6>
+                            <p class="text-muted">Instead of deletion, consider asking an admin to deactivate your account temporarily.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-edit text-primary me-2"></i>Profile Updates</h6>
+                            <p class="text-muted">Update your profile information if you're having issues with your current details.</p>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('profile') }}" class="btn btn-outline-info">
+                            <i class="fas fa-user-edit me-2"></i>Update Profile Instead
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Form validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    const reason = document.getElementById('reason').value.trim();
+    
+    if (reason.length < 20) {
+        e.preventDefault();
+        alert('Please provide a detailed reason (at least 20 characters) for the deletion request.');
+        return;
+    }
+    
+    // The browser confirm dialogs are replaced by Bootstrap modals
+    // The original confirm logic is removed as it's handled by the modals
+});
+
+function showConfirmationModal() {
+    const reason = document.getElementById('reason').value.trim();
+    
+    if (reason.length < 20) {
+        alert('Please provide a detailed reason (at least 20 characters) for the deletion request.');
+        return;
+    }
+    
+    const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+    confirmationModal.show();
+}
+
+function showFinalConfirmation() {
+    // Hide the first confirmation modal
+    const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+    confirmationModal.hide();
+    
+    // Show the final confirmation modal
+    const finalConfirmationModal = new bootstrap.Modal(document.getElementById('finalConfirmationModal'));
+    finalConfirmationModal.show();
+}
+
+function submitForm() {
+    // Hide the final confirmation modal
+    const finalConfirmationModal = new bootstrap.Modal(document.getElementById('finalConfirmationModal'));
+    finalConfirmationModal.hide();
+    
+    // Submit the form
+    document.querySelector('form').submit();
+}
+</script>
+{% endblock %}

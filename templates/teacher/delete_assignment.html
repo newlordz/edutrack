@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Assignment - {{ assignment.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('teacher_dashboard') }}">Teacher Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('manage_course', course_id=course.id) }}">{{ course.title }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('manage_assignments', course_id=course.id) }}">Manage Assignments</a></li>
+            <li class="breadcrumb-item active">Delete Assignment</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h2><i class="fas fa-exclamation-triangle"></i> Delete Assignment</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h5><i class="fas fa-warning"></i> Warning: This action cannot be undone!</h5>
+                        <p class="mb-0">You are about to permanently delete the assignment "<strong>{{ assignment.title }}</strong>" and all associated data.</p>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5>Assignment Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Title:</strong> {{ assignment.title }}</p>
+                                    <p><strong>Type:</strong> {{ assignment.assignment_type|title }}</p>
+                                    <p><strong>Due Date:</strong> {{ assignment.due_date.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Max Score:</strong> {{ assignment.max_score }} points</p>
+                                    <p><strong>Status:</strong> 
+                                        <span class="badge bg-{{ 'success' if assignment.is_active else 'warning' }}">
+                                            {{ 'Active' if assignment.is_active else 'Inactive' }}
+                                        </span>
+                                    </p>
+                                    <p><strong>Created:</strong> {{ assignment.created_at.strftime('%B %d, %Y') }}</p>
+                                </div>
+                            </div>
+                            <p><strong>Description:</strong> {{ assignment.description }}</p>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5>Data That Will Be Deleted</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-clipboard-list"></i> Assignment</span>
+                                    <span class="badge bg-primary rounded-pill">1</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-file-upload"></i> Student Submissions</span>
+                                    <span class="badge bg-warning rounded-pill">{{ assignment.submissions|length }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-star"></i> Grades & Feedback</span>
+                                    <span class="badge bg-info rounded-pill">{{ assignment.submissions|selectattr('score')|list|length }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> <strong>Note:</strong> If you want to temporarily hide this assignment from students instead of deleting it, consider deactivating it instead. This preserves all data and allows you to reactivate it later.
+                    </div>
+
+                    <form method="POST" class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you absolutely sure you want to delete this assignment? This action cannot be undone.')">
+                            <i class="fas fa-trash"></i> Yes, Delete Assignment
+                        </button>
+                        <a href="{{ url_for('manage_assignments', course_id=course.id) }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <a href="{{ url_for('edit_assignment', assignment_id=assignment.id) }}" class="btn btn-outline-primary">
+                            <i class="fas fa-edit"></i> Edit Instead
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

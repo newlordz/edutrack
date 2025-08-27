@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Timer Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Timer Styles */
+        .timer-container {
+            border-top: 1px solid rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .countdown-display {
+            min-width: 120px;
+            text-align: center;
+        }
+
+        #timer {
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* Pulse animation for urgent warnings */
+        .pulse {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Timer warning states */
+        #timer.text-warning {
+            color: #ffc107 !important;
+            font-weight: bold;
+        }
+
+        #timer.text-danger {
+            color: #dc3545 !important;
+            font-weight: bold;
+        }
+
+        /* Floating Timer */
+        .floating-timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ffc107, #ff8c00);
+            color: #000;
+            padding: 12px 20px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1050;
+            transition: all 0.3s ease;
+            border: 2px solid #fff;
+        }
+
+        .floating-timer-content {
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .floating-timer:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .floating-timer.warning {
+            background: linear-gradient(135deg, #ffc107, #ff6b35);
+        }
+
+        .floating-timer.danger {
+            background: linear-gradient(135deg, #dc3545, #ff4757);
+            animation: pulse 1s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="fas fa-question-circle me-2"></i>Quiz Timer Test</h4>
+                    </div>
+                    
+                    <!-- Live Countdown Timer -->
+                    <div class="timer-container bg-warning text-dark py-2">
+                        <div class="container">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-clock me-2"></i>
+                                    <span class="fw-bold">Time Remaining:</span>
+                                </div>
+                                <div class="countdown-display">
+                                    <span id="timer" class="h4 mb-0 fw-bold text-danger"></span>
+                                </div>
+                            </div>
+                            <!-- Time Progress Bar -->
+                            <div class="mt-2">
+                                <div class="progress" style="height: 8px;">
+                                    <div id="timeProgress" class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Timer Controls -->
+                            <div class="mt-2 d-flex justify-content-center">
+                                <button id="pauseBtn" class="btn btn-sm btn-outline-dark me-2" onclick="quizTimer.pause()">
+                                    <i class="fas fa-pause"></i> Pause
+                                </button>
+                                <button id="resumeBtn" class="btn btn-sm btn-outline-dark" onclick="quizTimer.resume()" style="display: none;">
+                                    <i class="fas fa-play"></i> Resume
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <h5>Test Instructions:</h5>
+                        <ul>
+                            <li>This is a 2-minute test timer</li>
+                            <li>Watch the countdown and progress bar</li>
+                            <li>Use pause/resume buttons to test functionality</li>
+                            <li>Scroll down to see the floating timer</li>
+                            <li>Notice color changes as time decreases</li>
+                        </ul>
+                        
+                        <div class="mt-4">
+                            <h6>Timer Features:</h6>
+                            <ul>
+                                <li>✅ Live countdown display</li>
+                                <li>✅ Visual progress bar</li>
+                                <li>✅ Color-coded warnings</li>
+                                <li>✅ Pause/Resume functionality</li>
+                                <li>✅ Floating timer on scroll</li>
+                                <li>✅ Auto-submission on expiry</li>
+                                <li>✅ Responsive design</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Add some content to enable scrolling -->
+                        <div class="mt-5" style="height: 800px; background: linear-gradient(45deg, #f0f0f0, #e0e0e0); padding: 20px;">
+                            <h6>Scroll down to test floating timer</h6>
+                            <p>This area is here to enable scrolling so you can test the floating timer functionality.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Timer (visible when scrolling) -->
+    <div id="floatingTimer" class="floating-timer d-none">
+        <div class="floating-timer-content">
+            <i class="fas fa-clock me-2"></i>
+            <span id="floatingTimerText" class="fw-bold"></span>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Timer Countdown
+        class QuizTimer {
+            constructor(minutes) {
+                this.totalSeconds = minutes * 60;
+                this.remainingSeconds = this.totalSeconds;
+                this.isRunning = false;
+                this.timerInterval = null;
+                this.init();
+            }
+            
+            init() {
+                this.updateDisplay();
+                this.start();
+                this.setupWarningLevels();
+            }
+            
+            start() {
+                this.isRunning = true;
+                this.timerInterval = setInterval(() => {
+                    this.remainingSeconds--;
+                    this.updateDisplay();
+                    
+                    if (this.remainingSeconds <= 0) {
+                        this.expire();
+                    }
+                }, 1000);
+            }
+            
+            updateDisplay() {
+                const timeString = this.getTimeString();
+                
+                // Update main timer
+                const timerElement = document.getElementById('timer');
+                if (timerElement) {
+                    timerElement.textContent = timeString;
+                }
+                
+                // Update floating timer
+                this.updateFloatingTimer(timeString);
+                
+                // Update progress bar
+                this.updateProgressBar();
+                
+                // Update warning colors based on time remaining
+                this.updateWarningColors();
+            }
+            
+            setupWarningLevels() {
+                // Add warning levels for different time thresholds
+                this.warningLevels = [
+                    { threshold: this.totalSeconds * 0.25, class: 'text-warning' }, // 25% remaining
+                    { threshold: this.totalSeconds * 0.1, class: 'text-danger' },   // 10% remaining
+                    { threshold: 60, class: 'text-danger pulse' }                   // Last minute
+                ];
+            }
+            
+            updateProgressBar() {
+                const progressBar = document.getElementById('timeProgress');
+                if (!progressBar) return;
+                
+                const percentage = (this.remainingSeconds / this.totalSeconds) * 100;
+                progressBar.style.width = percentage + '%';
+                
+                // Update progress bar color based on time remaining
+                progressBar.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+                
+                if (percentage > 25) {
+                    progressBar.classList.add('bg-success');
+                } else if (percentage > 10) {
+                    progressBar.classList.add('bg-warning');
+                } else {
+                    progressBar.classList.add('bg-danger');
+                }
+            }
+            
+            updateFloatingTimer(timeString) {
+                const floatingTimer = document.getElementById('floatingTimer');
+                const floatingTimerText = document.getElementById('floatingTimerText');
+                
+                if (!floatingTimer || !floatingTimerText) return;
+                
+                // Show floating timer after scrolling
+                if (window.scrollY > 100) {
+                    floatingTimer.classList.remove('d-none');
+                } else {
+                    floatingTimer.classList.add('d-none');
+                }
+                
+                // Update floating timer text
+                floatingTimerText.textContent = timeString;
+                
+                // Update floating timer styling based on time remaining
+                const percentage = (this.remainingSeconds / this.totalSeconds) * 100;
+                floatingTimer.classList.remove('warning', 'danger');
+                
+                if (percentage <= 25 && percentage > 10) {
+                    floatingTimer.classList.add('warning');
+                } else if (percentage <= 10) {
+                    floatingTimer.classList.add('danger');
+                }
+            }
+            
+            updateWarningColors() {
+                const timerElement = document.getElementById('timer');
+                if (!timerElement) return;
+                
+                // Remove all warning classes
+                timerElement.classList.remove('text-warning', 'text-danger', 'pulse');
+                
+                // Apply appropriate warning class
+                for (const level of this.warningLevels) {
+                    if (this.remainingSeconds <= level.threshold) {
+                        timerElement.classList.add(level.class);
+                        break;
+                    }
+                }
+                
+                // Add urgent warning for last 30 seconds
+                if (this.remainingSeconds <= 30) {
+                    timerElement.classList.add('pulse', 'text-danger');
+                }
+            }
+            
+            expire() {
+                this.stop();
+                this.showExpirationMessage();
+                this.autoSubmit();
+            }
+            
+            stop() {
+                this.isRunning = false;
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            }
+            
+            showExpirationMessage() {
+                const timerElement = document.getElementById('timer');
+                if (timerElement) {
+                    timerElement.textContent = 'TIME EXPIRED!';
+                    timerElement.classList.add('text-danger', 'pulse');
+                }
+                
+                // Show alert
+                alert('Time has expired! Your quiz will be submitted automatically.');
+            }
+            
+            autoSubmit() {
+                // Auto-submit the form after a short delay
+                setTimeout(() => {
+                    alert('Quiz would be submitted automatically in a real scenario.');
+                }, 2000);
+            }
+            
+            getRemainingTime() {
+                return this.remainingSeconds;
+            }
+            
+            getTimeString() {
+                const hours = Math.floor(this.remainingSeconds / 3600);
+                const minutes = Math.floor((this.remainingSeconds % 3600) / 60);
+                const seconds = this.remainingSeconds % 60;
+                
+                if (hours > 0) {
+                    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                } else {
+                    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }
+            
+            pause() {
+                this.stop();
+                this.updatePauseResumeButtons(true);
+            }
+            
+            resume() {
+                if (!this.isRunning) {
+                    this.start();
+                    this.updatePauseResumeButtons(false);
+                }
+            }
+            
+            updatePauseResumeButtons(isPaused) {
+                const pauseBtn = document.getElementById('pauseBtn');
+                const resumeBtn = document.getElementById('resumeBtn');
+                
+                if (pauseBtn && resumeBtn) {
+                    if (isPaused) {
+                        pauseBtn.style.display = 'none';
+                        resumeBtn.style.display = 'inline-block';
+                    } else {
+                        pauseBtn.style.display = 'inline-block';
+                        resumeBtn.style.display = 'none';
+                    }
+                }
+            }
+        }
+
+        // Initialize timer when page loads
+        let quizTimer;
+        document.addEventListener('DOMContentLoaded', function() {
+            // Test with 2 minutes
+            quizTimer = new QuizTimer(2);
+            
+            // Add scroll listener for floating timer
+            window.addEventListener('scroll', () => {
+                if (quizTimer) {
+                    quizTimer.updateFloatingTimer(quizTimer.getTimeString());
+                }
+            });
+        });
+    </script>
+</body>
+</html>

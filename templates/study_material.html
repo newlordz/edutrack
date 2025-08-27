@@ -1,0 +1,838 @@
+{% extends "base.html" %}
+
+{% block title %}{{ material.title }} - {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('course_detail', course_id=course.id) }}">{{ course.title }}</a></li>
+            <li class="breadcrumb-item active">{{ material.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2>{{ material.title }}</h2>
+                    <small class="text-muted">Course: {{ course.title }}</small>
+                </div>
+                <div class="card-body">
+                    {% if material.description %}
+                    <div class="mb-4">
+                        <h5>Description:</h5>
+                        <p>{{ material.description }}</p>
+                    </div>
+                    {% endif %}
+
+                                         <!-- File Status Information -->
+                     <div class="mb-4">
+                         <h5>File Status:</h5>
+                         {% if material.file_path %}
+                         <div class="alert alert-success">
+                             <i class="fas fa-check-circle me-2"></i>
+                             <strong>File Available:</strong> {{ material.file_type.upper() }} file is ready for download<br>
+                             <small class="text-muted">File ID: {{ material.id }} | Course: {{ material.course_id }}</small>
+                         </div>
+                         {% else %}
+                         <div class="alert alert-warning">
+                             <i class="fas fa-exclamation-triangle me-2"></i>
+                             <strong>No File Attached:</strong> This material appears to be text-only<br>
+                             <small class="text-muted">Material ID: {{ material.id }} | Course: {{ material.course_id }}</small>
+                         </div>
+                         {% endif %}
+                     </div>
+
+                    {% if material.file_path %}
+                    <div class="mb-4">
+                        <h5>Material:</h5>
+                        {% if material.file_type in ['pdf'] %}
+                            <div class="embed-responsive embed-responsive-16by9">
+                                <iframe class="embed-responsive-item" src="{{ material.file_path }}" allowfullscreen></iframe>
+                            </div>
+                        {% elif material.file_type in ['mp4', 'avi', 'mov', 'wmv'] %}
+                            <video controls class="w-100">
+                                <source src="{{ material.file_path }}" type="video/{{ material.file_type }}">
+                                Your browser does not support the video tag.
+                            </video>
+                        {% elif material.file_type in ['jpg', 'jpeg', 'png', 'gif'] %}
+                            <img src="{{ material.file_path }}" class="img-fluid" alt="{{ material.title }}">
+                                                 {% elif material.file_type in ['pptx', 'ppt', 'docx', 'doc', 'xlsx', 'xls'] %}
+                             <!-- Office files - show download button and preview if possible -->
+                             <div class="alert alert-info">
+                                 <i class="fas fa-file-alt me-2"></i>
+                                 <strong>{{ material.file_type.upper() }} File:</strong> {{ material.title }}
+                             </div>
+                             
+                                                           <!-- File Preview Section -->
+                              <div class="card mb-4 border-0 shadow-sm">
+                                  <div class="card-header bg-gradient-primary text-white">
+                                      <h6 class="mb-0"><i class="fas fa-eye me-2"></i>File Preview & Actions</h6>
+                                  </div>
+                                  <div class="card-body p-4">
+                                      <div class="row align-items-center">
+                                          <div class="col-md-4 text-center">
+                                              <div class="file-icon-large mb-3">
+                                                  {% if material.file_type in ['pptx', 'ppt'] %}
+                                                      <i class="fas fa-file-powerpoint fa-5x text-danger"></i>
+                                                  {% elif material.file_type in ['docx', 'doc'] %}
+                                                      <i class="fas fa-file-word fa-5x text-primary"></i>
+                                                  {% elif material.file_type in ['xlsx', 'xls'] %}
+                                                      <i class="fas fa-file-excel fa-5x text-success"></i>
+                                                  {% endif %}
+                                              </div>
+                                              <div class="mb-3">
+                                                  <span class="badge bg-secondary fs-6 px-3 py-2">{{ material.file_type.upper() }}</span>
+                                              </div>
+                                          </div>
+                                          <div class="col-md-8">
+                                              <h5 class="text-primary mb-3">{{ material.title }}</h5>
+                                              <p class="text-muted mb-3">{{ material.description or 'No description available' }}</p>
+                                              
+                                              {% if material.file_type in ['pptx', 'ppt'] %}
+                                              <div class="alert alert-info border-0 mb-3">
+                                                  <i class="fas fa-info-circle me-2"></i>
+                                                  <strong>PowerPoint Preview:</strong> Click "Preview Content" to see a sample of the presentation.
+                                              </div>
+                                              {% endif %}
+                                              
+                                              <div class="d-flex gap-3 flex-wrap">
+                                                  <button class="btn btn-outline-primary" onclick="showFilePreview()">
+                                                      <i class="fas fa-eye me-2"></i>Preview Content
+                                                  </button>
+                                                  <button class="btn btn-outline-info" onclick="showFileInfo()">
+                                                      <i class="fas fa-info-circle me-2"></i>File Details
+                                                  </button>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                             
+                                                           <!-- Simple Preview Section (No Modal) -->
+                              <div id="previewSection" class="mt-3">
+                                  <div class="card">
+                                      <div class="card-header bg-primary text-white">
+                                          <h6 class="mb-0"><i class="fas fa-eye me-2"></i>Content Preview</h6>
+                                      </div>
+                                      <div class="card-body">
+                                          <div class="alert alert-info">
+                                              <i class="fas fa-info-circle me-2"></i>
+                                              <strong>Preview Mode:</strong> This is a simulated preview since PowerPoint files cannot be displayed directly in web browsers.
+                                          </div>
+                                          
+                                          <div class="row">
+                                              <div class="col-md-6">
+                                                  <div class="card border-primary">
+                                                      <div class="card-header bg-primary text-white">
+                                                          <h6 class="mb-0"><i class="fas fa-file-powerpoint me-2"></i>Slide 1</h6>
+                                                      </div>
+                                                      <div class="card-body">
+                                                          <h5 class="text-primary">{{ material.title }}</h5>
+                                                          <p class="text-muted">Course: {{ course.title }}</p>
+                                                          <div class="text-center">
+                                                              <i class="fas fa-image fa-3x text-muted"></i>
+                                                              <p class="mt-2 text-muted">[Slide content preview]</p>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                              <div class="col-md-6">
+                                                  <div class="card border-success">
+                                                      <div class="card-header bg-success text-white">
+                                                          <h6 class="mb-0"><i class="fas fa-file-powerpoint me-2"></i>Slide 2</h6>
+                                                      </div>
+                                                      <div class="card-body">
+                                                          <h6>Content Overview</h6>
+                                                          <ul class="list-unstyled">
+                                                              <li><i class="fas fa-check text-success me-2"></i>File Type: {{ material.file_type.upper() }}</li>
+                                                              <li><i class="fas fa-check text-success me-2"></i>Material ID: {{ material.id }}</li>
+                                                              <li><i class="fas fa-check text-success me-2"></i>Course: {{ course.id }}</li>
+                                                          </ul>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          
+                                          <div class="alert alert-warning mt-3">
+                                              <i class="fas fa-exclamation-triangle me-2"></i>
+                                              <strong>Note:</strong> To view the actual slides, download the file and open it with PowerPoint, Google Slides, or Microsoft Office Online.
+                                          </div>
+                                          
+                                          <button class="btn btn-secondary" onclick="hidePreview()">
+                                              <i class="fas fa-times me-2"></i>Hide Preview
+                                          </button>
+                                      </div>
+                                  </div>
+                              </div>
+                             
+                                                           <!-- Download Buttons -->
+                              <div class="card mb-4 border-0 shadow-sm">
+                                  <div class="card-header bg-success text-white">
+                                      <h6 class="mb-0"><i class="fas fa-download me-2"></i>Download Options</h6>
+                                  </div>
+                                  <div class="card-body p-4">
+                                      <div class="row g-3">
+                                          <div class="col-md-6">
+                                              <a href="{{ url_for('download_material', material_id=material.id) }}" class="btn btn-primary btn-lg w-100 py-3">
+                                                  <i class="fas fa-download me-3"></i>
+                                                  Download {{ material.file_type.upper() }}
+                                              </a>
+                                          </div>
+                                          <div class="col-md-6">
+                                              <a href="{{ url_for('download_material', material_id=material.id) }}" target="_blank" class="btn btn-outline-primary btn-lg w-100 py-3">
+                                                  <i class="fas fa-external-link-alt me-3"></i>
+                                                  Open in New Tab
+                                              </a>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                            
+                                                                                       <!-- PowerPoint specific instructions -->
+                              {% if material.file_type in ['pptx', 'ppt'] %}
+                              <div class="card mb-4 border-0 shadow-sm">
+                                  <div class="card-header bg-info text-white">
+                                      <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>How to View This PowerPoint</h6>
+                                  </div>
+                                  <div class="card-body p-4">
+                                      <div class="alert alert-success border-0 mb-3">
+                                          <i class="fas fa-check-circle me-2"></i>
+                                          <strong>PowerPoint File Ready!</strong> Your file is available for download.
+                                      </div>
+                                      
+                                      <div class="row">
+                                          <div class="col-md-8">
+                                              <ol class="mb-0">
+                                                  <li class="mb-2"><strong>Download the file</strong> using the download button above</li>
+                                                  <li class="mb-2"><strong>Open with PowerPoint</strong> or similar presentation software</li>
+                                                  <li class="mb-2"><strong>Alternative:</strong> Use Google Slides or Microsoft Office Online</li>
+                                                  <li class="mb-2"><strong>Note:</strong> "Open in New Tab" will attempt to download the file in a new tab</li>
+                                              </ol>
+                                          </div>
+                                          <div class="col-md-4 text-center">
+                                              <i class="fas fa-file-powerpoint fa-3x text-info mb-2"></i>
+                                              <p class="text-muted small">PowerPoint Presentation</p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                              {% endif %}
+                        {% else %}
+                            <div class="alert alert-info">
+                                <i class="fas fa-download"></i>
+                                <a href="{{ material.file_path }}" download class="btn btn-primary">
+                                    Download {{ material.file_type.upper() }} File
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="mb-4">
+                        <h5>Material:</h5>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>No file attached to this material.</strong><br>
+                            This material appears to be text-only or the file upload failed.
+                        </div>
+                        
+                        {% if material.description %}
+                        <div class="mt-3">
+                            <h6>Content:</h6>
+                            <div class="border p-3 bg-light">
+                                {{ material.description }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                                                                                   <div class="mt-4">
+                          <div class="card border-0 shadow-sm">
+                              <div class="card-header bg-gradient-success text-white">
+                                  <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Study Progress & Notes</h5>
+                              </div>
+                              <div class="card-body p-4">
+                                  <!-- Progress Bar -->
+                                  <div class="mb-4">
+                                      <div class="d-flex justify-content-between align-items-center mb-2">
+                                          <label class="form-label fw-bold mb-0">Completion Status:</label>
+                                          <span class="badge {% if study_progress.completion_status == 'completed' %}bg-success{% elif study_progress.completion_status == 'in_progress' %}bg-warning{% else %}bg-secondary{% endif %} fs-6">
+                                              {{ study_progress.completion_status.replace('_', ' ').title() }}
+                                          </span>
+                                      </div>
+                                      <div class="progress mb-3" style="height: 28px;">
+                                          {% if study_progress.completion_status == 'completed' %}
+                                              <div class="progress-bar bg-success" style="width: 100%; font-weight: 600; font-size: 14px;">✓ Completed</div>
+                                          {% elif study_progress.completion_status == 'in_progress' %}
+                                              <div class="progress-bar bg-warning" style="width: 50%; font-weight: 600; font-size: 14px;">⟳ In Progress</div>
+                                          {% else %}
+                                              <div class="progress-bar bg-secondary" style="width: 0%; font-weight: 600; font-size: 14px;">○ Not Started</div>
+                                          {% endif %}
+                                      </div>
+                                  </div>
+                                  
+                                  <!-- Study Progress Form -->
+                                  <form method="POST" action="{{ url_for('mark_complete', material_id=material.id) }}">
+                                      <div class="row g-3">
+                                          <div class="col-md-8">
+                                              <div class="form-group">
+                                                  <label for="notes" class="form-label fw-bold text-primary">
+                                                      <i class="fas fa-sticky-note me-2"></i>Personal Notes:
+                                                  </label>
+                                                  <textarea class="form-control form-control-lg" id="notes" name="notes" rows="4" 
+                                                      placeholder="Add your personal notes, key points, or reminders about this material...">{{ study_progress.notes or '' }}</textarea>
+                                                  <div class="form-text">
+                                                      <i class="fas fa-lightbulb me-1"></i>Use this space to jot down important concepts, questions, or study reminders.
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <div class="col-md-4">
+                                              <div class="form-group">
+                                                  <label for="study_time" class="form-label fw-bold text-primary">
+                                                      <i class="fas fa-clock me-2"></i>Study Time (minutes):
+                                                  </label>
+                                                  <input type="number" class="form-control form-control-lg" id="study_time" name="study_time" 
+                                                      value="{{ study_progress.study_time_minutes or 0 }}" min="0" step="5">
+                                                  <div class="form-text">
+                                                      <i class="fas fa-info-circle me-1"></i>Track how long you spend studying this material.
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      
+                                      <hr class="my-4">
+                                      
+                                                                                                                    <div class="d-flex gap-3 justify-content-center flex-nowrap">
+                                            <button type="submit" class="btn btn-primary btn-lg px-4 py-3" name="action" value="save_notes">
+                                                <i class="fas fa-save me-2"></i>Save Notes
+                                            </button>
+                                            
+                                            {% if study_progress.completion_status != 'completed' %}
+                                            <button type="submit" class="btn btn-success btn-lg px-4 py-3" name="action" value="mark_complete">
+                                                <i class="fas fa-check me-2"></i>Mark as Complete
+                                            </button>
+                                            {% else %}
+                                            <button type="submit" class="btn btn-secondary btn-lg px-4 py-3" name="action" value="mark_incomplete">
+                                                <i class="fas fa-undo me-2"></i>Mark as Incomplete
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                  </form>
+                              </div>
+                          </div>
+                      </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Course Navigation</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Course Materials:</h6>
+                    <ul class="list-group list-group-flush">
+                        {% for mat in course.materials %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="{{ url_for('study_material', material_id=mat.id) }}" 
+                               class="text-decoration-none {% if mat.id == material.id %}fw-bold{% endif %}">
+                                {{ mat.title }}
+                            </a>
+                            {% if mat.id == material.id %}
+                                <span class="badge bg-primary">Current</span>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5>Study Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Last Accessed:</strong><br>
+                    {{ study_progress.last_accessed.strftime('%B %d, %Y at %I:%M %p') if study_progress.last_accessed else 'Never' }}</p>
+                    
+                    <p><strong>Total Study Time:</strong><br>
+                    {{ study_progress.study_time_minutes or 0 }} minutes</p>
+                    
+                    <p><strong>Status:</strong><br>
+                    <span class="badge {% if study_progress.completion_status == 'completed' %}bg-success{% elif study_progress.completion_status == 'in_progress' %}bg-warning{% else %}bg-secondary{% endif %}">
+                        {{ study_progress.completion_status.replace('_', ' ').title() }}
+                    </span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* CSS PROTECTION: Prevent content from being hidden or removed */
+.card-body {
+    position: relative !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+}
+
+.card-body * {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: revert !important;
+}
+
+/* Prevent any CSS animations that might hide content */
+.card-body,
+.card-body * {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+}
+
+ /* Force important elements to stay visible */
+ .btn-primary,
+ .btn-outline-primary,
+ .alert,
+ .card {
+     display: block !important;
+     visibility: visible !important;
+     opacity: 1 !important;
+     position: static !important;
+ }
+ 
+ /* Allow preview section to be hidden/shown */
+ #previewSection {
+     display: none !important;
+ }
+ 
+ #previewSection.show-preview {
+     display: block !important;
+ }
+
+ /* Override any Bootstrap or custom CSS that might hide content */
+ .fade,
+ .fade.in,
+ .fade.show {
+     opacity: 1 !important;
+     visibility: visible !important;
+ }
+ 
+ /* File Preview Styles */
+ .file-icon-large {
+     padding: 30px;
+     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+     border-radius: 15px;
+     border: 2px dashed #dee2e6;
+     transition: all 0.3s ease;
+ }
+ 
+ .file-icon-large:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+ }
+ 
+ .alert-sm {
+     padding: 0.5rem 0.75rem;
+     font-size: 0.875rem;
+ }
+ 
+ .preview-content .card {
+     border: 1px solid #dee2e6;
+     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+ }
+ 
+ .preview-content .card-header {
+     font-weight: 600;
+ }
+ 
+ /* Ensure preview section can be hidden/shown properly */
+ #previewSection {
+     transition: all 0.3s ease;
+ }
+ 
+ #previewSection[style*="display: none"] {
+     display: none !important;
+ }
+ 
+ /* Enhanced Layout Styles */
+ .bg-gradient-primary {
+     background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+ }
+ 
+ .card {
+     border-radius: 10px;
+     overflow: hidden;
+ }
+ 
+ .card-header {
+     border-bottom: none;
+     padding: 1rem 1.5rem;
+ }
+ 
+ .card-body {
+     padding: 1.5rem;
+ }
+ 
+ .btn-lg {
+     border-radius: 8px;
+     font-weight: 600;
+     letter-spacing: 0.5px;
+ }
+ 
+ .progress {
+     border-radius: 10px;
+     overflow: hidden;
+     box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+ }
+ 
+ .progress-bar {
+     border-radius: 10px;
+     font-size: 14px;
+     line-height: 25px;
+ }
+ 
+ /* Form improvements */
+ .form-control {
+     border-radius: 8px;
+     border: 2px solid #e9ecef;
+     transition: all 0.3s ease;
+ }
+ 
+ .form-control:focus {
+     border-color: #007bff;
+     box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+ }
+ 
+ .form-label {
+     color: #495057;
+     margin-bottom: 0.5rem;
+ }
+ 
+ /* Study Progress Section Enhancements */
+ .bg-gradient-success {
+     background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+ }
+ 
+ .form-control-lg {
+     border-radius: 10px;
+     border: 2px solid #e9ecef;
+     transition: all 0.3s ease;
+     font-size: 16px;
+ }
+ 
+ .form-control-lg:focus {
+     border-color: #28a745;
+     box-shadow: 0 0 0 0.2rem rgba(40,167,69,0.25);
+     transform: translateY(-1px);
+ }
+ 
+ .form-text {
+     font-size: 0.875rem;
+     color: #6c757d;
+     margin-top: 0.5rem;
+ }
+ 
+ .progress {
+     border-radius: 15px;
+     overflow: hidden;
+     box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+     background-color: #f8f9fa;
+ }
+ 
+ .progress-bar {
+     border-radius: 15px;
+     font-size: 14px;
+     line-height: 28px;
+     transition: all 0.5s ease;
+ }
+ 
+ .badge.fs-6 {
+     font-size: 0.875rem !important;
+     padding: 0.5rem 0.75rem;
+ }
+ 
+ /* Button enhancements */
+ .btn-lg.px-4.py-3 {
+     min-width: 160px;
+     transition: all 0.3s ease;
+ }
+ 
+ .btn-lg.px-4.py-3:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+ }
+ 
+ /* Form spacing improvements */
+ .row.g-3 > * {
+     padding: 0.75rem;
+ }
+ 
+   hr.my-4 {
+      border-color: #e9ecef;
+      opacity: 0.5;
+  }
+  
+  /* Force buttons to stay on same line */
+  .d-flex.flex-nowrap {
+      flex-wrap: nowrap !important;
+      white-space: nowrap !important;
+  }
+  
+  .d-flex.flex-nowrap .btn {
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+  }
+</style>
+
+<script>
+// AGGRESSIVELY DISABLE ALL AUTO-REFRESH MECHANISMS
+console.log('Study material page - ALL auto-refresh mechanisms disabled');
+
+// Function to clear ALL possible timers
+function clearAllTimers() {
+    // Clear any existing refresh timers
+    if (window.refreshTimer) {
+        clearTimeout(window.refreshTimer);
+        console.log('Cleared window.refreshTimer');
+    }
+    
+    // Clear any timers with common names
+    const timerNames = ['refreshTimer', 'autoRefreshTimer', 'enrollmentTimer', 'statusTimer'];
+    timerNames.forEach(name => {
+        if (window[name]) {
+            clearTimeout(window[name]);
+            console.log(`Cleared ${name}`);
+        }
+    });
+    
+    // Clear any timers stored in localStorage or sessionStorage
+    try {
+        localStorage.removeItem('refreshTimer');
+        sessionStorage.removeItem('refreshTimer');
+        console.log('Cleared storage timers');
+    } catch (e) {
+        console.log('No storage timers to clear');
+    }
+}
+
+// Clear all timers immediately
+clearAllTimers();
+
+// Clear all timers every 2 seconds to catch any new ones
+setInterval(clearAllTimers, 2000);
+
+// Override setTimeout and setInterval to prevent new timers
+const originalSetTimeout = window.setTimeout;
+const originalSetInterval = window.setInterval;
+
+window.setTimeout = function(func, delay, ...args) {
+    // Block any refresh-related functions
+    if (typeof func === 'string' && func.includes('refresh')) {
+        console.log('Blocked refresh setTimeout');
+        return null;
+    }
+    if (typeof func === 'function' && func.toString().includes('refresh')) {
+        console.log('Blocked refresh function setTimeout');
+        return null;
+    }
+    return originalSetTimeout(func, delay, ...args);
+};
+
+window.setInterval = function(func, delay, ...args) {
+    // Block any refresh-related functions
+    if (typeof func === 'string' && func.includes('refresh')) {
+        console.log('Blocked refresh setInterval');
+        return null;
+    }
+    if (typeof func === 'function' && func.toString().includes('refresh')) {
+        console.log('Blocked refresh function setInterval');
+        return null;
+    }
+    return originalSetInterval(func, delay, ...args);
+};
+
+// Prevent page unload/refresh
+window.addEventListener('beforeunload', function(e) {
+    console.log('Page refresh attempt blocked');
+    e.preventDefault();
+    e.returnValue = 'Changes you made may not be saved. Are you sure you want to leave?';
+    return e.returnValue;
+});
+
+// Block any location.reload() calls
+const originalLocationReload = window.location.reload;
+window.location.reload = function() {
+    console.log('location.reload() blocked');
+    return false;
+};
+
+    // Protection is now active silently - no need for visible notifications
+
+// Monitor for any DOM changes that might indicate content disappearing
+const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        if (mutation.type === 'childList') {
+            // Check if important content is being removed
+            mutation.removedNodes.forEach(function(node) {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    const text = node.textContent || '';
+                    if (text.includes('Material:') || text.includes('DOWNLOAD') || text.includes('PowerPoint')) {
+                        console.log('WARNING: Study material content being removed!');
+                        // Try to restore it
+                        setTimeout(() => {
+                            if (!document.querySelector('.btn-primary')) {
+                                console.log('Attempting to restore content...');
+                                location.reload();
+                            }
+                        }, 1000);
+                    }
+                }
+            });
+        }
+    });
+});
+
+// Start monitoring when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    console.log('DOM monitoring started');
+});
+
+// ADDITIONAL PROTECTION: Block any script that tries to modify the page
+document.addEventListener('DOMContentLoaded', function() {
+    // Override innerHTML to prevent content replacement
+    const originalInnerHTML = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+    Object.defineProperty(Element.prototype, 'innerHTML', {
+        set: function(value) {
+            if (typeof value === 'string' && 
+                (value.includes('Material:') || value.includes('DOWNLOAD') || value.includes('PowerPoint'))) {
+                console.log('BLOCKED: Attempt to replace study material content');
+                return; // Block the replacement
+            }
+            return originalInnerHTML.set.call(this, value);
+        },
+        get: function() {
+            return originalInnerHTML.get.call(this);
+        }
+    });
+    
+    // Override textContent to prevent text replacement
+    const originalTextContent = Object.getOwnPropertyDescriptor(Node.prototype, 'textContent');
+    Object.defineProperty(Node.prototype, 'textContent', {
+        set: function(value) {
+            if (typeof value === 'string' && 
+                (value.includes('Material:') || value.includes('DOWNLOAD') || value.includes('PowerPoint'))) {
+                console.log('BLOCKED: Attempt to replace study material text');
+                return; // Block the replacement
+            }
+            return originalTextContent.set.call(this, value);
+        },
+        get: function() {
+            return originalTextContent.get.call(this);
+        }
+    });
+    
+    console.log('Content replacement protection activated');
+});
+
+// FINAL PROTECTION: Keep a backup of the content
+let contentBackup = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait a moment for content to load, then backup
+    setTimeout(() => {
+        const materialSection = document.querySelector('.card-body');
+        if (materialSection) {
+            contentBackup = materialSection.innerHTML;
+            console.log('Content backup created');
+        }
+    }, 2000);
+    
+    // Check every 5 seconds if content is missing and restore if needed
+    setInterval(() => {
+        const materialSection = document.querySelector('.card-body');
+        if (materialSection && contentBackup) {
+            const hasContent = materialSection.innerHTML.includes('Material:') || 
+                              materialSection.innerHTML.includes('DOWNLOAD') ||
+                              materialSection.innerHTML.includes('PowerPoint');
+            
+            if (!hasContent) {
+                console.log('Content missing! Restoring from backup...');
+                materialSection.innerHTML = contentBackup;
+            }
+        }
+    }, 5000);
+    
+         // ADDITIONAL PROTECTION: Override the main.js alert removal function
+     if (window.location.pathname.includes('/study/')) {
+         // Override the main.js setTimeout function to prevent alert removal
+         const originalSetTimeout = window.setTimeout;
+         window.setTimeout = function(func, delay, ...args) {
+             // Block any function that tries to remove alerts or slide content
+             if (typeof func === 'function') {
+                 const funcStr = func.toString();
+                 if (funcStr.includes('alert.remove') || 
+                     funcStr.includes('translateX') || 
+                     funcStr.includes('remove()')) {
+                     console.log('BLOCKED: main.js content removal attempt');
+                     return null; // Block the function
+                 }
+             }
+             return originalSetTimeout(func, delay, ...args);
+         };
+         console.log('main.js content removal protection activated');
+     }
+ });
+ 
+ // Simple File Preview Functions
+ console.log('Preview functions loaded successfully');
+ 
+ function showFilePreview() {
+     const previewSection = document.getElementById('previewSection');
+     if (previewSection) {
+         previewSection.classList.add('show-preview');
+         // Scroll to the preview section
+         previewSection.scrollIntoView({ behavior: 'smooth' });
+         console.log('Preview shown successfully');
+     } else {
+         console.log('Preview section not found');
+     }
+ }
+ 
+ function hidePreview() {
+     const previewSection = document.getElementById('previewSection');
+     if (previewSection) {
+         previewSection.classList.remove('show-preview');
+         console.log('Preview hidden successfully');
+     } else {
+         console.log('Preview section not found');
+     }
+ }
+ 
+ function showFileInfo() {
+     // Create a simple info display instead of alert
+     const infoContent = `
+         <strong>File Information:</strong><br>
+         <strong>Title:</strong> {{ material.title }}<br>
+         <strong>Type:</strong> {{ material.file_type.upper() }}<br>
+         <strong>Course:</strong> {{ course.title }}<br>
+         <strong>Material ID:</strong> {{ material.id }}<br>
+         <strong>Course ID:</strong> {{ course.id }}<br>
+         <strong>Description:</strong> {{ material.description or 'No description available' }}
+     `;
+     
+     // Show in a simple alert (this will work)
+     alert(infoContent);
+ }
+</script>
+
+{% endblock %}

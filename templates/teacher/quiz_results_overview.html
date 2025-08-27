@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Results - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="fas fa-chart-bar text-info me-2"></i>
+                Quiz Results Overview
+            </h1>
+            <p class="text-muted mb-0">{{ quiz.title }} - {{ course.title }}</p>
+        </div>
+        <div>
+            <a href="{{ url_for('manage_quizzes', course_id=course.id) }}" class="btn btn-outline-secondary me-2">
+                <i class="fas fa-arrow-left me-1"></i>Back to Quizzes
+            </a>
+            <a href="{{ url_for('edit_quiz_answers', quiz_id=quiz.id) }}" class="btn btn-warning">
+                <i class="fas fa-edit me-1"></i>Edit Answers
+            </a>
+        </div>
+    </div>
+
+    <!-- Quiz Information -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Quiz Details
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Title:</strong> {{ quiz.title }}</p>
+                            <p><strong>Description:</strong> {{ quiz.description or 'No description' }}</p>
+                            <p><strong>Questions:</strong> {{ quiz.questions|length }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Time Limit:</strong> {{ quiz.time_limit_minutes }} minutes</p>
+                            <p><strong>Passing Score:</strong> {{ quiz.passing_score }}%</p>
+                            <p><strong>Created:</strong> {{ quiz.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-trophy me-2"></i>Performance Summary
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="display-6 text-primary mb-1">{{ total_attempts }}</div>
+                            <small class="text-muted">Total Attempts</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="display-6 text-success mb-1">{{ passed_attempts }}</div>
+                            <small class="text-muted">Passed</small>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="display-6 text-info mb-1">{{ avg_score }}%</div>
+                            <small class="text-muted">Avg Score</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="display-6 text-warning mb-1">{{ highest_score }}%</div>
+                            <small class="text-muted">Highest</small>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="display-6 text-danger mb-1">{{ lowest_score }}%</div>
+                            <small class="text-muted">Lowest Score</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pass Rate Chart -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>Pass Rate
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if total_attempts > 0 %}
+                        {% set pass_rate = (passed_attempts / total_attempts) * 100 %}
+                        {% set fail_rate = 100 - pass_rate %}
+                        <div class="position-relative d-inline-block">
+                            <div class="progress-circle" style="width: 150px; height: 150px;">
+                                <svg width="150" height="150" viewBox="0 0 150 150">
+                                    <circle cx="75" cy="75" r="60" fill="none" stroke="#e9ecef" stroke-width="12"/>
+                                    <circle cx="75" cy="75" r="60" fill="none" stroke="#28a745" stroke-width="12" 
+                                            stroke-dasharray="{{ 2 * 3.14159 * 60 }}" 
+                                            stroke-dashoffset="{{ 2 * 3.14159 * 60 * (1 - pass_rate/100) }}"
+                                            transform="rotate(-90 75 75)"/>
+                                </svg>
+                                <div class="position-absolute top-50 start-50 translate-middle">
+                                    <div class="display-6 text-success">{{ pass_rate|round(1) }}%</div>
+                                    <small class="text-muted">Pass Rate</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge bg-success me-2">{{ passed_attempts }} Passed</span>
+                            <span class="badge bg-danger">{{ total_attempts - passed_attempts }} Failed</span>
+                        </div>
+                    {% else %}
+                        <div class="py-4">
+                            <i class="fas fa-chart-pie text-muted" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-2">No attempts yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>Score Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if total_attempts > 0 %}
+                        <div class="score-distribution">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>90-100% (A)</span>
+                                <span class="badge bg-success">{{ attempts|selectattr('percentage', 'ge', 90)|list|length }}</span>
+                            </div>
+                            <div class="progress mb-3" style="height: 8px;">
+                                <div class="progress-bar bg-success" style="width: {{ (attempts|selectattr('percentage', 'ge', 90)|list|length / total_attempts * 100)|round(1) }}%"></div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>80-89% (B)</span>
+                                <span class="badge bg-info">{{ attempts|selectattr('percentage', 'ge', 80)|selectattr('percentage', 'lt', 90)|list|length }}</span>
+                            </div>
+                            <div class="progress mb-3" style="height: 8px;">
+                                <div class="progress-bar bg-info" style="width: {{ (attempts|selectattr('percentage', 'ge', 80)|selectattr('percentage', 'lt', 90)|list|length / total_attempts * 100)|round(1) }}%"></div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>70-79% (C)</span>
+                                <span class="badge bg-warning">{{ attempts|selectattr('percentage', 'ge', 70)|selectattr('percentage', 'lt', 80)|list|length }}</span>
+                            </div>
+                            <div class="progress mb-3" style="height: 8px;">
+                                <div class="progress-bar bg-warning" style="width: {{ (attempts|selectattr('percentage', 'ge', 70)|selectattr('percentage', 'lt', 80)|list|length / total_attempts * 100)|round(1) }}%"></div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>60-69% (D)</span>
+                                <span class="badge bg-warning">{{ attempts|selectattr('percentage', 'ge', 60)|selectattr('percentage', 'lt', 70)|list|length }}</span>
+                            </div>
+                            <div class="progress mb-3" style="height: 8px;">
+                                <div class="progress-bar bg-warning" style="width: {{ (attempts|selectattr('percentage', 'ge', 60)|selectattr('percentage', 'lt', 70)|list|length / total_attempts * 100)|round(1) }}%"></div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Below 60% (F)</span>
+                                <span class="badge bg-danger">{{ attempts|selectattr('percentage', 'lt', 60)|list|length }}</span>
+                            </div>
+                            <div class="progress mb-3" style="height: 8px;">
+                                <div class="progress-bar bg-danger" style="width: {{ (attempts|selectattr('percentage', 'lt', 60)|list|length / total_attempts * 100)|round(1) }}%"></div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-line text-muted" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-2">No attempts yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Results Table -->
+    {% if attempts %}
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-users me-2"></i>Student Results
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Student</th>
+                            <th>Score</th>
+                            <th>Percentage</th>
+                            <th>Status</th>
+                            <th>Time Taken</th>
+                            <th>Completed</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for attempt in attempts %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="student-avatar me-3">
+                                        <i class="fas fa-user text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">{{ attempt.user.first_name }} {{ attempt.user.last_name }}</h6>
+                                        <small class="text-muted">{{ attempt.user.username }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if attempt.passed else 'danger' }} fs-6">
+                                    {{ attempt.score }}/{{ attempt.max_score }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="progress me-2" style="width: 100px; height: 20px;">
+                                        <div class="progress-bar bg-{{ 'success' if attempt.percentage >= 80 else 'warning' if attempt.percentage >= 60 else 'danger' }}" 
+                                             style="width: {{ attempt.percentage }}%">
+                                            {{ attempt.percentage|round(1) }}%
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% if attempt.passed %}
+                                    <span class="badge bg-success">Passed</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Failed</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if attempt.completed_at and attempt.started_at %}
+                                    {% set duration = (attempt.completed_at - attempt.started_at).total_seconds() / 60 %}
+                                    <span class="badge bg-secondary">{{ duration|round(1) }} min</span>
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if attempt.completed_at %}
+                                    <small class="text-muted">{{ attempt.completed_at.strftime('%b %d, %Y at %I:%M %p') }}</small>
+                                {% else %}
+                                    <span class="badge bg-warning">In Progress</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('quiz_results', attempt_id=attempt.id) }}" 
+                                   class="btn btn-sm btn-info" title="View Detailed Results">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- No Attempts -->
+    <div class="text-center py-5">
+        <div class="student-avatar mb-4">
+            <i class="fas fa-users text-muted" style="font-size: 4rem;"></i>
+        </div>
+        <h4 class="text-muted mb-3">No Quiz Attempts Yet</h4>
+        <p class="text-muted mb-4">Students haven't taken this quiz yet. Encourage them to start!</p>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.student-avatar {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(13, 110, 253, 0.1);
+}
+
+.progress-circle {
+    position: relative;
+}
+
+.progress {
+    border-radius: 10px;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    border-radius: 10px;
+    transition: width 0.6s ease;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+.score-distribution .progress {
+    background-color: #f8f9fa;
+}
+
+.score-distribution .badge {
+    min-width: 30px;
+}
+</style>
+{% endblock %}

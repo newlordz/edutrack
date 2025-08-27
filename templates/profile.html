@@ -149,7 +149,7 @@
                         </div>
                         {% endfor %}
                         <div class="text-center mt-3">
-                            <a href="{{ url_for('grades') }}" class="btn btn-outline-primary">
+                            <a href="{{ url_for('view_grades') }}" class="btn btn-outline-primary">
                                 <i class="fas fa-chart-line me-1"></i>View All Grades
                             </a>
                         </div>
@@ -183,6 +183,13 @@
                                 <button class="btn btn-outline-secondary" disabled>
                                     <i class="fas fa-key me-2"></i>Change Password
                                 </button>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-grid">
+                                <a href="{{ url_for('request_account_deletion') }}" class="btn btn-outline-danger">
+                                    <i class="fas fa-user-times me-2"></i>Request Account Deletion
+                                </a>
                             </div>
                         </div>
                         <div class="col-12">

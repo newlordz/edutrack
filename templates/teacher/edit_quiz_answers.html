@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Quiz Answers - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="fas fa-edit text-warning me-2"></i>
+                Edit Quiz Answers
+            </h1>
+            <p class="text-muted mb-0">{{ quiz.title }} - {{ course.title }}</p>
+        </div>
+        <div>
+            <a href="{{ url_for('quiz_results_overview', quiz_id=quiz.id) }}" class="btn btn-outline-secondary me-2">
+                <i class="fas fa-arrow-left me-1"></i>Back to Results
+            </a>
+            <a href="{{ url_for('manage_quizzes', course_id=course.id) }}" class="btn btn-outline-primary">
+                <i class="fas fa-list me-1"></i>All Quizzes
+            </a>
+        </div>
+    </div>
+
+    <!-- Warning Alert -->
+    <div class="alert alert-warning" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <strong>Important:</strong> Changing quiz answers will automatically recalculate scores for all existing student attempts. 
+        This action cannot be undone, so please review carefully before saving.
+    </div>
+
+    <!-- Quiz Information -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-info-circle me-2"></i>Quiz Details
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Title:</strong> {{ quiz.title }}</p>
+                    <p><strong>Questions:</strong> {{ quiz.questions|length }}</p>
+                    <p><strong>Time Limit:</strong> {{ quiz.time_limit_minutes }} minutes</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Passing Score:</strong> {{ quiz.passing_score }}%</p>
+                    <p><strong>Total Attempts:</strong> {{ quiz.attempts|length }}</p>
+                    <p><strong>Created:</strong> {{ quiz.created_at.strftime('%B %d, %Y') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Answers Form -->
+    <form method="POST">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-warning text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-question-circle me-2"></i>Edit Questions and Answers
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for question in quiz.questions %}
+                <div class="question-edit mb-4 p-4 border rounded">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h6 class="mb-0">
+                            <span class="badge bg-primary me-2">Question {{ loop.index }}</span>
+                            {{ question.question_text }}
+                        </h6>
+                        <div class="question-actions">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" 
+                                    onclick="toggleQuestionPreview({{ loop.index }})">
+                                <i class="fas fa-eye me-1"></i>Preview
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Question Preview (Hidden by default) -->
+                    <div id="questionPreview{{ loop.index }}" class="question-preview mb-3" style="display: none;">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">Question Preview:</h6>
+                                <p class="mb-3">{{ question.question_text }}</p>
+                                <div class="options-preview">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" disabled checked>
+                                        <label class="form-check-label">
+                                            <strong>A)</strong> {{ question.option_a }}
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" disabled>
+                                        <label class="form-check-label">
+                                            <strong>B)</strong> {{ question.option_b }}
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" disabled>
+                                        <label class="form-check-label">
+                                            <strong>C)</strong> {{ question.option_c }}
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" disabled>
+                                        <label class="form-check-label">
+                                            <strong>D)</strong> {{ question.option_d }}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Answer Options -->
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        <strong>A)</strong> {{ question.option_a }}
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        <strong>B)</strong> {{ question.option_b }}
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        <strong>C)</strong> {{ question.option_c }}
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        <strong>D)</strong> {{ question.option_d }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="correct_answer_{{ question.id }}" class="form-label">
+                                        <strong>Correct Answer</strong>
+                                    </label>
+                                    <select class="form-select" id="correct_answer_{{ question.id }}" 
+                                            name="correct_answer_{{ question.id }}" required>
+                                        <option value="">Select...</option>
+                                        <option value="A" {{ 'selected' if question.correct_answer == 'A' }}>A</option>
+                                        <option value="B" {{ 'selected' if question.correct_answer == 'B' }}>B</option>
+                                        <option value="C" {{ 'selected' if question.correct_answer == 'C' }}>C</option>
+                                        <option value="D" {{ 'selected' if question.correct_answer == 'D' }}>D</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="points_{{ question.id }}" class="form-label">
+                                        <strong>Points</strong>
+                                    </label>
+                                    <input type="number" class="form-control" id="points_{{ question.id }}" 
+                                           name="points_{{ question.id }}" value="{{ question.points }}" 
+                                           min="1" max="10" required>
+                                    <div class="form-text">1-10 points</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current Statistics -->
+                    {% set question_attempts = quiz.attempts|map(attribute='answers')|map('selectattr', 'question_id', 'equalto', question.id)|map('first')|list %}
+                    {% set correct_answers = question_attempts|selectattr('is_correct', 'equalto', true)|list %}
+                    {% set total_answers = question_attempts|length %}
+                    {% if total_answers > 0 %}
+                    <div class="mt-3 p-3 bg-light rounded">
+                        <small class="text-muted">
+                            <strong>Current Statistics:</strong> 
+                            {{ correct_answers|length }}/{{ total_answers }} students answered correctly 
+                            ({{ ((correct_answers|length / total_answers) * 100)|round(1) }}% success rate)
+                        </small>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <!-- Form Actions -->
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                    <div class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        All changes will automatically recalculate existing student scores
+                    </div>
+                    <div>
+                        <a href="{{ url_for('quiz_results_overview', quiz_id=quiz.id) }}" class="btn btn-secondary me-2">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-save me-2"></i>Update Quiz Answers
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+.question-edit {
+    background-color: #f8f9fa;
+    border-color: #dee2e6 !important;
+}
+
+.question-edit:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd !important;
+}
+
+.question-preview {
+    background-color: white;
+    border-radius: 8px;
+}
+
+.options-preview .form-check-label {
+    font-weight: normal;
+    color: #495057;
+}
+
+.form-select, .form-control {
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+}
+
+.form-select:focus, .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.badge {
+    font-size: 0.875rem;
+}
+
+.alert {
+    border-radius: 8px;
+    border: none;
+}
+
+.card {
+    border-radius: 10px;
+    border: none;
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+</style>
+
+<script>
+function toggleQuestionPreview(questionNumber) {
+    const preview = document.getElementById(`questionPreview${questionNumber}`);
+    if (preview.style.display === 'none') {
+        preview.style.display = 'block';
+    } else {
+        preview.style.display = 'none';
+    }
+}
+
+// Form validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    const correctAnswers = document.querySelectorAll('select[name^="correct_answer_"]');
+    const points = document.querySelectorAll('input[name^="points_"]');
+    
+    let isValid = true;
+    let errorMessage = '';
+    
+    // Check if all correct answers are selected
+    correctAnswers.forEach((select, index) => {
+        if (!select.value) {
+            isValid = false;
+            errorMessage += `Question ${index + 1}: Please select a correct answer.\n`;
+        }
+    });
+    
+    // Check if all points are valid
+    points.forEach((input, index) => {
+        const value = parseInt(input.value);
+        if (isNaN(value) || value < 1 || value > 10) {
+            isValid = false;
+            errorMessage += `Question ${index + 1}: Points must be between 1 and 10.\n`;
+        }
+    });
+    
+    if (!isValid) {
+        e.preventDefault();
+        alert('Please fix the following errors:\n\n' + errorMessage);
+    } else {
+        // Show confirmation dialog
+        if (!confirm('Are you sure you want to update the quiz answers? This will recalculate all existing student scores.')) {
+            e.preventDefault();
+        }
+    }
+});
+</script>
+{% endblock %}

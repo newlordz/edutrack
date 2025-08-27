@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Assignment - {{ assignment.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('teacher_dashboard') }}">Teacher Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('manage_course', course_id=course.id) }}">{{ course.title }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('manage_assignments', course_id=course.id) }}">Manage Assignments</a></li>
+            <li class="breadcrumb-item active">Edit Assignment</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-edit"></i> Edit Assignment</h2>
+                    <h5 class="text-muted">Course: {{ course.title }}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group mb-3">
+                                    <label for="title" class="form-label">Assignment Title *</label>
+                                    <input type="text" class="form-control" id="title" name="title" required
+                                           value="{{ assignment.title }}"
+                                           placeholder="e.g., Midterm Exam, Project 1, Quiz 2">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="assignment_type" class="form-label">Assignment Type *</label>
+                                    <select class="form-control" id="assignment_type" name="assignment_type" required>
+                                        <option value="assignment" {% if assignment.assignment_type == 'assignment' %}selected{% endif %}>Assignment</option>
+                                        <option value="quiz" {% if assignment.assignment_type == 'quiz' %}selected{% endif %}>Quiz</option>
+                                        <option value="exam" {% if assignment.assignment_type == 'exam' %}selected{% endif %}>Exam</option>
+                                        <option value="project" {% if assignment.assignment_type == 'project' %}selected{% endif %}>Project</option>
+                                        <option value="presentation" {% if assignment.assignment_type == 'presentation' %}selected{% endif %}>Presentation</option>
+                                        <option value="discussion" {% if assignment.assignment_type == 'discussion' %}selected{% endif %}>Discussion</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="description" class="form-label">Description *</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required
+                                      placeholder="Provide a clear description of what students need to do">{{ assignment.description }}</textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="due_date" class="form-label">Due Date & Time *</label>
+                                    <input type="datetime-local" class="form-control" id="due_date" name="due_date" required
+                                           value="{{ assignment.due_date.strftime('%Y-%m-%dT%H:%M') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="max_score" class="form-label">Maximum Score *</label>
+                                    <input type="number" class="form-control" id="max_score" name="max_score" required
+                                           value="{{ assignment.max_score }}" min="1" step="0.1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="instructions" class="form-label">Instructions</label>
+                            <textarea class="form-control" id="instructions" name="instructions" rows="4"
+                                      placeholder="Provide step-by-step instructions for students">{{ assignment.instructions or '' }}</textarea>
+                            <small class="form-text text-muted">Optional: Detailed instructions for students</small>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                                   {% if assignment.is_active %}checked{% endif %}>
+                            <label class="form-check-label" for="is_active">
+                                Assignment is active and visible to students
+                            </label>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Update Assignment
+                            </button>
+                            <a href="{{ url_for('manage_assignments', course_id=course.id) }}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-info-circle"></i> Assignment Info</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Created:</strong><br>
+                        <small class="text-muted">{{ assignment.created_at.strftime('%B %d, %Y at %I:%M %p') }}</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Current Status:</strong><br>
+                        <span class="badge bg-{{ 'success' if assignment.is_active else 'warning' }}">
+                            {{ 'Active' if assignment.is_active else 'Inactive' }}
+                        </span>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>Submissions:</strong><br>
+                        <small class="text-muted">
+                            {{ assignment.submissions|length }} total submission(s)
+                        </small>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <small>
+                            <i class="fas fa-lightbulb"></i> <strong>Tip:</strong><br>
+                            You can temporarily deactivate an assignment by unchecking the "Active" box. 
+                            This will hide it from students without deleting it.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

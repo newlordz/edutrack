@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Timer Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .timer { font-size: 2em; font-weight: bold; color: #333; }
+        .controls { margin: 20px 0; }
+        button { padding: 10px 20px; margin: 5px; font-size: 16px; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>Simple Timer Test</h1>
+    
+    <div class="timer" id="timer">00:00</div>
+    
+    <div class="controls">
+        <button onclick="startTimer()">Start Timer</button>
+        <button onclick="pauseTimer()">Pause</button>
+        <button onclick="resumeTimer()">Resume</button>
+        <button onclick="resetTimer()">Reset</button>
+        <button onclick="testTimer()">Test Timer</button>
+    </div>
+    
+    <div class="debug" id="debug"></div>
+    
+    <script>
+        let timerInterval = null;
+        let remainingSeconds = 120; // 2 minutes
+        let isRunning = false;
+        
+        function updateDisplay() {
+            const minutes = Math.floor(remainingSeconds / 60);
+            const seconds = remainingSeconds % 60;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            document.getElementById('timer').textContent = timeString;
+            log(`Display updated: ${timeString} (${remainingSeconds}s remaining)`);
+        }
+        
+        function startTimer() {
+            if (isRunning) return;
+            
+            log('Starting timer...');
+            isRunning = true;
+            
+            timerInterval = setInterval(() => {
+                remainingSeconds--;
+                log(`Timer tick: ${remainingSeconds}s remaining`);
+                updateDisplay();
+                
+                if (remainingSeconds <= 0) {
+                    log('Timer expired!');
+                    clearInterval(timerInterval);
+                    isRunning = false;
+                    document.getElementById('timer').textContent = 'TIME UP!';
+                }
+            }, 1000);
+            
+            log(`Timer started, interval ID: ${timerInterval}`);
+        }
+        
+        function pauseTimer() {
+            if (!isRunning) return;
+            
+            log('Pausing timer...');
+            clearInterval(timerInterval);
+            isRunning = false;
+            log('Timer paused');
+        }
+        
+        function resumeTimer() {
+            if (isRunning) return;
+            
+            log('Resuming timer...');
+            startTimer();
+        }
+        
+        function resetTimer() {
+            log('Resetting timer...');
+            clearInterval(timerInterval);
+            isRunning = false;
+            remainingSeconds = 120;
+            updateDisplay();
+            log('Timer reset to 2 minutes');
+        }
+        
+        function testTimer() {
+            log('=== TIMER TEST ===');
+            log(`Timer running: ${isRunning}`);
+            log(`Remaining seconds: ${remainingSeconds}`);
+            log(`Interval ID: ${timerInterval}`);
+            log(`Display element: ${document.getElementById('timer')}`);
+            log('=== END TEST ===');
+        }
+        
+        function log(message) {
+            const debug = document.getElementById('debug');
+            const timestamp = new Date().toLocaleTimeString();
+            debug.innerHTML += `[${timestamp}] ${message}<br>`;
+            debug.scrollTop = debug.scrollHeight;
+            console.log(message);
+        }
+        
+        // Initialize display
+        updateDisplay();
+        log('Timer test page loaded');
+    </script>
+</body>
+</html>

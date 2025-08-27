@@ -203,6 +203,11 @@
                             </a>
                         </div>
                         <div class="col-md-3">
+                            <a href="{{ url_for('admin_create_course') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-plus me-2"></i>Create Course
+                            </a>
+                        </div>
+                        <div class="col-md-3">
                             <a href="{{ url_for('system_analytics') }}" class="btn btn-outline-info w-100">
                                 <i class="fas fa-chart-bar me-2"></i>Analytics
                             </a>
@@ -210,6 +215,19 @@
                         <div class="col-md-3">
                             <a href="{{ url_for('courses') }}" class="btn btn-outline-secondary w-100">
                                 <i class="fas fa-search me-2"></i>Browse Courses
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('manage_deletion_requests') }}" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Deletion Requests
+                                {% if pending_deletion_requests > 0 %}
+                                <span class="badge bg-danger ms-1">{{ pending_deletion_requests }}</span>
+                                {% endif %}
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('manage_user_deletion_requests') }}" class="btn btn-outline-danger w-100">
+                                <i class="fas fa-user-times me-2"></i>User Deletion Requests
                             </a>
                         </div>
                     </div>

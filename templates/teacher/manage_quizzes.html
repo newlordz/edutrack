@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Quizzes - {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="fas fa-question-circle text-primary me-2"></i>
+                Manage Quizzes
+            </h1>
+            <p class="text-muted mb-0">{{ course.title }}</p>
+        </div>
+        <div>
+            <a href="{{ url_for('manage_course', course_id=course.id) }}" class="btn btn-outline-secondary me-2">
+                <i class="fas fa-arrow-left me-1"></i>Back to Course
+            </a>
+            <a href="{{ url_for('create_quiz', course_id=course.id) }}" class="btn btn-success">
+                <i class="fas fa-plus me-1"></i>Create New Quiz
+            </a>
+        </div>
+    </div>
+
+    <!-- Quiz Statistics Overview -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="display-6 text-primary mb-2">{{ quiz_stats|length }}</div>
+                    <div class="text-muted">Total Quizzes</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="display-6 text-success mb-2">
+                        {{ quiz_stats|sum(attribute='total_attempts') }}
+                    </div>
+                    <div class="text-muted">Total Attempts</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="display-6 text-info mb-2">
+                        {% set total_passed = quiz_stats|sum(attribute='passed_attempts') %}
+                        {% set total_attempts = quiz_stats|sum(attribute='total_attempts') %}
+                        {% if total_attempts > 0 %}
+                            {{ ((total_passed / total_attempts) * 100)|round(1) }}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                    </div>
+                    <div class="text-muted">Pass Rate</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="display-6 text-warning mb-2">
+                        {% set total_avg = quiz_stats|sum(attribute='avg_score') %}
+                        {% if quiz_stats|length > 0 %}
+                            {{ (total_avg / quiz_stats|length)|round(1) }}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                    </div>
+                    <div class="text-muted">Avg Score</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quizzes List -->
+    {% if quiz_stats %}
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-list me-2"></i>Course Quizzes
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Quiz Title</th>
+                            <th>Questions</th>
+                            <th>Time Limit</th>
+                            <th>Passing Score</th>
+                            <th>Attempts</th>
+                            <th>Pass Rate</th>
+                            <th>Avg Score</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in quiz_stats %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="quiz-icon me-3">
+                                        <i class="fas fa-question-circle text-primary fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">{{ stat.quiz.title }}</h6>
+                                        <small class="text-muted">
+                                            Created {{ stat.quiz.created_at.strftime('%b %d, %Y') }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ stat.quiz.questions|length }} questions</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">{{ stat.quiz.time_limit_minutes }} min</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-warning">{{ stat.quiz.passing_score }}%</span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-primary me-2">{{ stat.total_attempts }}</span>
+                                    {% if stat.total_attempts > 0 %}
+                                    <small class="text-muted">
+                                        ({{ stat.passed_attempts }} passed)
+                                    </small>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                {% if stat.total_attempts > 0 %}
+                                    {% set pass_rate = (stat.passed_attempts / stat.total_attempts) * 100 %}
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar bg-success" 
+                                             style="width: {{ pass_rate }}%"
+                                             title="{{ pass_rate|round(1) }}%">
+                                            {{ pass_rate|round(1) }}%
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted">No attempts</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if stat.total_attempts > 0 %}
+                                    <span class="badge bg-{{ 'success' if stat.avg_score >= 80 else 'warning' if stat.avg_score >= 60 else 'danger' }}">
+                                        {{ stat.avg_score }}%
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if stat.quiz.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    {% if stat.total_attempts > 0 %}
+                                    <a href="{{ url_for('quiz_results_overview', quiz_id=stat.quiz.id) }}" 
+                                       class="btn btn-sm btn-info" title="View Results">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </a>
+                                    {% endif %}
+                                    <a href="{{ url_for('edit_quiz_answers', quiz_id=stat.quiz.id) }}" 
+                                       class="btn btn-sm btn-warning" title="Edit Answers">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-danger" 
+                                            onclick="confirmDeleteQuiz({{ stat.quiz.id }}, '{{ stat.quiz.title }}')"
+                                            title="Delete Quiz">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- No Quizzes -->
+    <div class="text-center py-5">
+        <div class="quiz-icon mb-4">
+            <i class="fas fa-question-circle text-muted" style="font-size: 4rem;"></i>
+        </div>
+        <h4 class="text-muted mb-3">No Quizzes Yet</h4>
+        <p class="text-muted mb-4">Create your first quiz to start assessing your students' knowledge.</p>
+        <a href="{{ url_for('create_quiz', course_id=course.id) }}" class="btn btn-success btn-lg">
+            <i class="fas fa-plus me-2"></i>Create Your First Quiz
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Delete Quiz Modal -->
+<div class="modal fade" id="deleteQuizModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Delete Quiz
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the quiz "<strong id="quizTitleToDelete"></strong>"?</p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Warning:</strong> This action cannot be undone. All quiz attempts and student answers will be permanently deleted.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteQuizForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Delete Quiz
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.quiz-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(13, 110, 253, 0.1);
+}
+
+.progress {
+    border-radius: 10px;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    border-radius: 10px;
+    transition: width 0.6s ease;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+.btn-group .btn {
+    margin-right: 2px;
+}
+
+.btn-group .btn:last-child {
+    margin-right: 0;
+}
+</style>
+
+<script>
+function confirmDeleteQuiz(quizId, quizTitle) {
+    document.getElementById('quizTitleToDelete').textContent = quizTitle;
+    document.getElementById('deleteQuizForm').action = "{{ url_for('delete_quiz', quiz_id=0) }}".replace('0', quizId);
+    
+    const modal = new bootstrap.Modal(document.getElementById('deleteQuizModal'));
+    modal.show();
+}
+</script>
+{% endblock %}

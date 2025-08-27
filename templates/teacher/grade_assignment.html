@@ -1,64 +1,217 @@
 {% extends "base.html" %}
 
-{% block title %}Grade Assignment - {{ student.first_name }} {{ student.last_name }}{% endblock %}
+{% block title %}Grade Assignment - {{ submission.assignment.title }}{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('teacher_dashboard') }}">Teacher Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('manage_course', course_id=submission.assignment.course.id) }}">{{ submission.assignment.course.title }}</a></li>
+            <li class="breadcrumb-item active">Grade Assignment</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="mb-0">
-                        <i class="fas fa-edit me-2"></i>Grade Assignment
-                    </h4>
+                    <h2>Grade Assignment</h2>
+                    <h5 class="text-muted">{{ submission.assignment.title }}</h5>
                 </div>
                 <div class="card-body">
-                    <!-- Student Info -->
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <div class="alert alert-info">
-                                <h6 class="mb-2">Student Information</h6>
-                                <p class="mb-1"><strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}</p>
-                                <p class="mb-1"><strong>Email:</strong> {{ student.email }}</p>
-                                <p class="mb-0"><strong>Course:</strong> {{ course.title }}</p>
+                    <div class="mb-4">
+                        <h6>Assignment Details:</h6>
+                        <p><strong>Course:</strong> {{ submission.assignment.course.title }}</p>
+                        <p><strong>Type:</strong> {{ submission.assignment.assignment_type.title() }}</p>
+                        <p><strong>Due Date:</strong> {{ submission.assignment.due_date.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                        <p><strong>Max Score:</strong> {{ submission.assignment.max_score }} points</p>
+                        
+                        {% if submission.assignment.description %}
+                        <p><strong>Description:</strong><br>{{ submission.assignment.description }}</p>
+                        {% endif %}
+                        
+                        {% if submission.assignment.instructions %}
+                        <p><strong>Instructions:</strong><br>{{ submission.assignment.instructions }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <h6>Student Information:</h6>
+                        <p><strong>Student:</strong> {{ submission.student.first_name }} {{ submission.student.last_name }}</p>
+                        <p><strong>Username:</strong> {{ submission.student.username }}</p>
+                        <p><strong>Email:</strong> {{ submission.student.email }}</p>
+                        <p><strong>Submitted:</strong> {{ submission.submitted_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                        
+                        {% if submission.is_late() %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Late Submission:</strong> This assignment was submitted after the due date.
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <h6>Student Submission:</h6>
+                        
+                        {% if submission.submission_text %}
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6>Text Submission</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="bg-light p-3 rounded">
+                                    {{ submission.submission_text|nl2br }}
+                                </div>
                             </div>
                         </div>
+                        {% endif %}
+                        
+                        {% if submission.file_path %}
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6>File Submission</h6>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>File:</strong> {{ submission.file_path.split('/')[-1] }}</p>
+                                <a href="{{ submission.file_path }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-external-link-alt"></i> View File
+                                </a>
+                                <a href="{{ submission.file_path }}" download class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if not submission.submission_text and not submission.file_path %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            No submission content found.
+                        </div>
+                        {% endif %}
                     </div>
 
                     <form method="POST">
                         <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="assignment_name" class="form-label">Assignment Name *</label>
-                                <input type="text" class="form-control" id="assignment_name" name="assignment_name" required>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="score" class="form-label">Score *</label>
+                                    <input type="number" class="form-control" id="score" name="score" 
+                                           min="0" max="{{ submission.assignment.max_score }}" step="0.1" required
+                                           value="{{ submission.score or '' }}"
+                                           placeholder="Enter score (0-{{ submission.assignment.max_score }})">
+                                    <div class="form-text">Score out of {{ submission.assignment.max_score }} points</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="percentage" class="form-label">Percentage</label>
+                                    <input type="text" class="form-control" id="percentage" readonly
+                                           value="{% if submission.score %}{{ ((submission.score / submission.assignment.max_score) * 100) | round(1) }}%{% endif %}">
+                                    <div class="form-text">Automatically calculated</div>
+                                </div>
                             </div>
                         </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="score" class="form-label">Score (%) *</label>
-                                <input type="number" class="form-control" id="score" name="score" min="0" max="100" step="0.1" required>
-                            </div>
+
+                        <div class="form-group mb-3">
+                            <label for="feedback" class="form-label">Feedback</label>
+                            <textarea class="form-control" id="feedback" name="feedback" rows="6"
+                                      placeholder="Provide constructive feedback to the student...">{{ submission.feedback or '' }}</textarea>
+                            <div class="form-text">This feedback will be visible to the student.</div>
                         </div>
-                        
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="feedback" class="form-label">Feedback</label>
-                                <textarea class="form-control" id="feedback" name="feedback" rows="4" placeholder="Provide constructive feedback for the student..."></textarea>
-                            </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Grading Guidelines:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Be constructive and specific in your feedback</li>
+                                <li>Consider both content and effort</li>
+                                <li>Use the full scoring range appropriately</li>
+                                <li>Provide actionable suggestions for improvement</li>
+                            </ul>
                         </div>
-                        
+
                         <div class="d-flex justify-content-between">
-                            <a href="{{ url_for('manage_course', course_id=course.id) }}" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Back to Course
+                            <a href="{{ url_for('manage_course', course_id=submission.assignment.course.id) }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Course
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Submit Grade
+                                <i class="fas fa-save"></i> Save Grade & Feedback
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Grading Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Submission Status:</h6>
+                        <span class="badge {% if submission.status == 'graded' %}bg-success{% elif submission.status == 'late' %}bg-warning{% else %}bg-info{% endif %}">
+                            {{ submission.status.title() }}
+                        </span>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Grading Scale:</h6>
+                        <ul class="list-unstyled small">
+                            <li>A: 90-100% ({{ (submission.assignment.max_score * 0.9) | round(1) }}-{{ submission.assignment.max_score }} points)</li>
+                            <li>B: 80-89% ({{ (submission.assignment.max_score * 0.8) | round(1) }}-{{ (submission.assignment.max_score * 0.89) | round(1) }} points)</li>
+                            <li>C: 70-79% ({{ (submission.assignment.max_score * 0.7) | round(1) }}-{{ (submission.assignment.max_score * 0.79) | round(1) }} points)</li>
+                            <li>D: 60-69% ({{ (submission.assignment.max_score * 0.6) | round(1) }}-{{ (submission.assignment.max_score * 0.69) | round(1) }} points)</li>
+                            <li>F: Below 60% (Below {{ (submission.assignment.max_score * 0.6) | round(1) }} points)</li>
+                        </ul>
+                    </div>
+
+                    {% if submission.score %}
+                    <div class="mb-3">
+                        <h6>Current Grade:</h6>
+                        <p class="mb-1"><strong>Score:</strong> {{ submission.score }}/{{ submission.assignment.max_score }}</p>
+                        <p class="mb-1"><strong>Percentage:</strong> {{ ((submission.score / submission.assignment.max_score) * 100) | round(1) }}%</p>
+                        <p class="mb-0"><strong>Letter Grade:</strong> 
+                            <span class="badge {% if submission.score >= submission.assignment.max_score * 0.9 %}bg-success{% elif submission.score >= submission.assignment.max_score * 0.8 %}bg-primary{% elif submission.score >= submission.assignment.max_score * 0.7 %}bg-info{% elif submission.score >= submission.assignment.max_score * 0.6 %}bg-warning{% else %}bg-danger{% endif %}">
+                                {{ submission.get_letter_grade() }}
+                            </span>
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Note:</strong> Once you save the grade, it will be immediately visible to the student.
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+// Calculate percentage when score changes
+document.getElementById('score').addEventListener('input', function() {
+    const score = parseFloat(this.value) || 0;
+    const maxScore = {{ submission.assignment.max_score }};
+    const percentage = (score / maxScore) * 100;
+    
+    document.getElementById('percentage').value = percentage.toFixed(1) + '%';
+});
+
+// Validate score input
+document.getElementById('score').addEventListener('blur', function() {
+    const score = parseFloat(this.value) || 0;
+    const maxScore = {{ submission.assignment.max_score }};
+    
+    if (score < 0) {
+        this.value = 0;
+    } else if (score > maxScore) {
+        this.value = maxScore;
+    }
+});
+</script>
 {% endblock %} 

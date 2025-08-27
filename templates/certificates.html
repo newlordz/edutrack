@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+
+{% block title %}Certificates - EduTrack{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold">
+                <i class="fas fa-certificate text-primary me-3"></i>My Certificates
+            </h1>
+            <p class="lead text-muted">Celebrate your achievements with course completion certificates.</p>
+        </div>
+    </div>
+
+    {% if completed_courses %}
+        <!-- Stats Overview -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-trophy text-warning" style="font-size: 2.5rem;"></i>
+                        <h3 class="mt-3 mb-1">{{ completed_courses|length }}</h3>
+                        <p class="text-muted mb-0">Courses Completed</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-star text-success" style="font-size: 2.5rem;"></i>
+                        <h3 class="mt-3 mb-1">
+                            {% set avg_grade = completed_courses | map(attribute='average_grade') | list | sum / completed_courses|length %}
+                            {{ "%.1f"|format(avg_grade) }}%
+                        </h3>
+                        <p class="text-muted mb-0">Average Grade</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-calendar text-info" style="font-size: 2.5rem;"></i>
+                        <h3 class="mt-3 mb-1">
+                            {% set latest_completion = completed_courses | map(attribute='completed_date') | list | max %}
+                            {{ latest_completion.strftime('%b %Y') }}
+                        </h3>
+                        <p class="text-muted mb-0">Latest Completion</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-share-alt text-primary" style="font-size: 2.5rem;"></i>
+                        <h3 class="mt-3 mb-1">{{ completed_courses|length }}</h3>
+                        <p class="text-muted mb-0">Ready to Share</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Certificates Grid -->
+        <div class="row g-4">
+            {% for cert in completed_courses %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm h-100 certificate-card">
+                    <div class="card-header bg-gradient-primary text-white text-center py-4">
+                        <i class="fas fa-certificate" style="font-size: 3rem;"></i>
+                        <h5 class="mb-0 mt-2">Certificate of Completion</h5>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="text-center mb-3">
+                            <h6 class="fw-bold text-primary">{{ cert.course.title }}</h6>
+                            <p class="text-muted small mb-2">{{ cert.course.description[:100] }}...</p>
+                        </div>
+                        
+                        <div class="row text-center mb-3">
+                            <div class="col-6">
+                                <div class="border-end">
+                                    <h6 class="text-success mb-1">{{ "%.1f"|format(cert.average_grade) }}%</h6>
+                                    <small class="text-muted">Final Grade</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="text-info mb-1">{{ cert.completed_date.strftime('%b %d') }}</h6>
+                                <small class="text-muted">Completed</small>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-auto">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary btn-sm" onclick="downloadCertificate('{{ cert.certificate_id }}')">
+                                    <i class="fas fa-download me-2"></i>Download PDF
+                                </button>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="shareCertificate('{{ cert.certificate_id }}')">
+                                        <i class="fas fa-share me-2"></i>Share
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm" onclick="viewCertificate('{{ cert.certificate_id }}')">
+                                        <i class="fas fa-eye me-2"></i>View
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light text-center">
+                        <small class="text-muted">ID: {{ cert.certificate_id }}</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Certificate Actions -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="mb-3">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>Certificate Management
+                        </h5>
+                        <div class="d-flex justify-content-center gap-3 flex-wrap">
+                            <button class="btn btn-outline-primary" onclick="downloadAllCertificates()">
+                                <i class="fas fa-download me-2"></i>Download All
+                            </button>
+                            <button class="btn btn-outline-success" onclick="shareAllCertificates()">
+                                <i class="fas fa-share-alt me-2"></i>Share All
+                            </button>
+                            <button class="btn btn-outline-info" onclick="printAllCertificates()">
+                                <i class="fas fa-print me-2"></i>Print All
+                            </button>
+                            <button class="btn btn-outline-warning" onclick="exportToLinkedIn()">
+                                <i class="fab fa-linkedin me-2"></i>Export to LinkedIn
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <!-- No Certificates -->
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-certificate text-muted" style="font-size: 6rem;"></i>
+            </div>
+            <h3 class="text-muted mb-3">No Certificates Yet</h3>
+            <p class="text-muted mb-4">
+                Complete courses with passing grades to earn your first certificate.<br>
+                Start your learning journey today!
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{{ url_for('courses') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-search me-2"></i>Browse Courses
+                </a>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-tachometer-alt me-2"></i>My Dashboard
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Certificate Preview Modal -->
+<div class="modal fade" id="certificateModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-certificate text-primary me-2"></i>Certificate Preview
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="certificate-preview p-4 border rounded">
+                    <div class="bg-gradient-primary text-white p-4 rounded mb-4">
+                        <i class="fas fa-certificate" style="font-size: 4rem;"></i>
+                        <h3 class="mt-3">Certificate of Completion</h3>
+                        <p class="mb-0">This is to certify that</p>
+                    </div>
+                    
+                    <div class="py-4">
+                        <h4 class="text-primary mb-3">{{ user.first_name }} {{ user.last_name }}</h4>
+                        <p class="mb-3">has successfully completed the course</p>
+                        <h5 class="text-dark mb-4" id="modalCourseTitle">Course Title</h5>
+                        
+                        <div class="row text-center mb-4">
+                            <div class="col-6">
+                                <h6 class="text-success" id="modalGrade">Grade %</h6>
+                                <small class="text-muted">Final Grade</small>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="text-info" id="modalDate">Date</h6>
+                                <small class="text-muted">Completion Date</small>
+                            </div>
+                        </div>
+                        
+                        <p class="text-muted small">Certificate ID: <span id="modalCertId">CERT-XXX</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="downloadCertificate(currentCertId)">
+                    <i class="fas fa-download me-2"></i>Download
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentCertId = '';
+
+function downloadCertificate(certId) {
+    // Simulate certificate download
+    const link = document.createElement('a');
+    link.href = `data:text/plain;charset=utf-8,${encodeURIComponent('Certificate Download - ' + certId)}`;
+    link.download = `certificate-${certId}.pdf`;
+    link.click();
+    
+    // Show success message
+    showNotification('Certificate downloaded successfully!', 'success');
+}
+
+function shareCertificate(certId) {
+    if (navigator.share) {
+        navigator.share({
+            title: 'My Course Certificate',
+            text: 'Check out my course completion certificate!',
+            url: window.location.href
+        });
+    } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            showNotification('Certificate link copied to clipboard!', 'success');
+        });
+    }
+}
+
+function viewCertificate(certId) {
+    currentCertId = certId;
+    
+    // Find the certificate data
+    const cert = completedCourses.find(c => c.certificate_id === certId);
+    if (cert) {
+        document.getElementById('modalCourseTitle').textContent = cert.course.title;
+        document.getElementById('modalGrade').textContent = cert.average_grade.toFixed(1) + '%';
+        document.getElementById('modalDate').textContent = new Date(cert.completed_date).toLocaleDateString();
+        document.getElementById('modalCertId').textContent = cert.certificate_id;
+    }
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('certificateModal'));
+    modal.show();
+}
+
+function downloadAllCertificates() {
+    showNotification('Downloading all certificates...', 'info');
+    // Implementation for bulk download
+}
+
+function shareAllCertificates() {
+    showNotification('Sharing all certificates...', 'info');
+    // Implementation for bulk sharing
+}
+
+function printAllCertificates() {
+    showNotification('Preparing certificates for printing...', 'info');
+    // Implementation for bulk printing
+}
+
+function exportToLinkedIn() {
+    showNotification('Exporting to LinkedIn...', 'info');
+    // Implementation for LinkedIn export
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Store completed courses data for JavaScript access
+const completedCourses = {{ completed_courses | tojson | safe }};
+</script>
+
+<style>
+.certificate-card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.certificate-card:hover {
+    transform: translateY(-5px);
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.certificate-preview {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+</style>
+{% endblock %}

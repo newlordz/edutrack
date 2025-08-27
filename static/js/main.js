@@ -7,18 +7,22 @@ document.addEventListener('DOMContentLoaded', function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    // Auto-dismiss alerts with beautiful animation
-    const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(function(alert) {
-        setTimeout(function() {
-            alert.style.transition = 'all 0.5s ease';
-            alert.style.transform = 'translateX(100%)';
-            alert.style.opacity = '0';
+    // Auto-dismiss alerts with beautiful animation (EXCEPT on study material pages)
+    if (!window.location.pathname.includes('/study/')) {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
             setTimeout(function() {
-                alert.remove();
-            }, 500);
-        }, 5000);
-    });
+                alert.style.transition = 'all 0.5s ease';
+                alert.style.transform = 'translateX(100%)';
+                alert.style.opacity = '0';
+                setTimeout(function() {
+                    alert.remove();
+                }, 500);
+            }, 5000);
+        });
+    } else {
+        console.log('Study material page detected - alert auto-removal disabled');
+    }
 
     // Animate progress bars with intersection observer
     const progressBars = document.querySelectorAll('.progress-bar');

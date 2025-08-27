@@ -1,0 +1,443 @@
+{% extends "base.html" %}
+
+{% block title %}Review Deletion Request - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Review Deletion Request
+                </h1>
+                <a href="{{ url_for('manage_deletion_requests') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Requests
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Details -->
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Course Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-book me-2"></i>Course Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Course Title</h6>
+                            <p class="mb-3">{{ deletion_request.course.title }}</p>
+                            
+                            <h6>Description</h6>
+                            <p class="mb-3">{{ deletion_request.course.description }}</p>
+                            
+                            <h6>Category</h6>
+                            <p class="mb-3">{{ deletion_request.course.category }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Instructor</h6>
+                            <p class="mb-3">
+                                {{ deletion_request.course.instructor.first_name }} {{ deletion_request.course.instructor.last_name }}
+                                <br>
+                                <small class="text-muted">@{{ deletion_request.course.instructor.username }}</small>
+                            </p>
+                            
+                            <h6>Created</h6>
+                            <p class="mb-3">{{ deletion_request.course.created_at.strftime('%B %d, %Y') }}</p>
+                            
+                            <h6>Status</h6>
+                            <p class="mb-3">
+                                {% if deletion_request.course.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Inactive</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deletion Request Details -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-file-alt me-2"></i>Deletion Request Details
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Requested By</h6>
+                            <p class="mb-3">
+                                {{ deletion_request.requester.first_name }} {{ deletion_request.requester.last_name }}
+                                <br>
+                                <small class="text-muted">@{{ deletion_request.requester.username }}</small>
+                                <br>
+                                <span class="badge bg-secondary">{{ deletion_request.requester.role|title }}</span>
+                            </p>
+                            
+                            <h6>Requested On</h6>
+                            <p class="mb-3">{{ deletion_request.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Current Status</h6>
+                            <p class="mb-3">
+                                {% if deletion_request.status == 'pending' %}
+                                    <span class="badge bg-warning">Pending Review</span>
+                                {% elif deletion_request.status == 'approved' %}
+                                    <span class="badge bg-success">Approved</span>
+                                {% elif deletion_request.status == 'denied' %}
+                                    <span class="badge bg-danger">Denied</span>
+                                {% endif %}
+                            </p>
+                            
+                            <h6>Reason for Deletion</h6>
+                            <div class="alert alert-warning">
+                                {{ deletion_request.reason }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Impact Analysis -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>Impact Analysis
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            <div class="border rounded p-3">
+                                <h4 class="text-primary">{{ deletion_request.course.enrollments|length }}</h4>
+                                <p class="mb-0 text-muted">Enrolled Students</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="border rounded p-3">
+                                <h4 class="text-info">{{ deletion_request.course.assignments|length }}</h4>
+                                <p class="mb-0 text-muted">Assignments</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="border rounded p-3">
+                                <h4 class="text-success">{{ deletion_request.course.materials|length }}</h4>
+                                <p class="mb-0 text-muted">Study Materials</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="border rounded p-3">
+                                <h4 class="text-warning">{{ deletion_request.course.announcements|length }}</h4>
+                                <p class="mb-0 text-muted">Announcements</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if deletion_request.course.enrollments %}
+                    <div class="mt-4">
+                        <h6>Currently Enrolled Students:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Enrolled</th>
+                                        <th>Progress</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for enrollment in deletion_request.course.enrollments[:5] %}
+                                    <tr>
+                                        <td>
+                                            {{ enrollment.student.first_name }} {{ enrollment.student.last_name }}
+                                            <br>
+                                            <small class="text-muted">@{{ enrollment.student.username }}</small>
+                                        </td>
+                                        <td>{{ enrollment.enrolled_at.strftime('%B %d, %Y') }}</td>
+                                        <td>
+                                            {% set progress = enrollment.study_progress|selectattr('course_id', 'equalto', deletion_request.course.id)|first %}
+                                            {% if progress %}
+                                                <div class="progress" style="height: 20px;">
+                                                    <div class="progress-bar" role="progressbar" 
+                                                         style="width: {{ progress.completion_percentage }}%">
+                                                        {{ progress.completion_percentage }}%
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                                <span class="text-muted">No progress data</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% if deletion_request.course.enrollments|length > 5 %}
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted">
+                                            ... and {{ deletion_request.course.enrollments|length - 5 }} more students
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Review Form -->
+            {% if deletion_request.status == 'pending' %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-gavel me-2"></i>Review Decision
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="adminReviewForm">
+                        <div class="mb-3">
+                            <label for="decision" class="form-label">Decision</label>
+                            <select class="form-select" id="decision" name="decision" required>
+                                <option value="">Select decision...</option>
+                                <option value="approve">Approve Deletion</option>
+                                <option value="deny">Deny Deletion</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="admin_notes" class="form-label">Admin Notes</label>
+                            <textarea class="form-control" id="admin_notes" name="admin_notes" rows="4" 
+                                      placeholder="Provide reasoning for your decision..."></textarea>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" id="submitDecisionBtn">
+                                <i class="fas fa-save me-2"></i>Submit Decision
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Debug Info -->
+                    <div class="mt-3 p-3 bg-light border rounded">
+                        <h6 class="mb-2"><i class="fas fa-bug me-2"></i>Debug Information</h6>
+                        <p class="mb-1"><strong>Form ID:</strong> adminReviewForm</p>
+                        <p class="mb-1"><strong>Form Method:</strong> POST</p>
+                        <p class="mb-1"><strong>Button ID:</strong> submitDecisionBtn</p>
+                        <p class="mb-1"><strong>Decision Required:</strong> Yes</p>
+                        <p class="mb-0"><strong>Status:</strong> Check browser console for errors</p>
+                    </div>
+                    
+                                     </div>
+             </div>
+             {% endif %}
+             
+             <!-- Confirmation Modal -->
+             <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                 <div class="modal-dialog">
+                     <div class="modal-content">
+                         <div class="modal-header">
+                             <h5 class="modal-title" id="confirmationModalLabel">
+                                 <i class="fas fa-exclamation-triangle text-warning me-2"></i>Confirm Decision
+                             </h5>
+                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                         </div>
+                         <div class="modal-body">
+                             <p>Are you sure you want to <strong id="decisionText"></strong> this deletion request?</p>
+                             <div class="alert alert-info">
+                                 <strong>Decision:</strong> <span id="decisionDisplay"></span><br>
+                                 <strong>Notes:</strong> <span id="notesDisplay"></span>
+                             </div>
+                         </div>
+                         <div class="modal-footer">
+                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                 <i class="fas fa-times me-2"></i>No, Cancel
+                             </button>
+                             <button type="button" class="btn btn-primary" id="confirmSubmitBtn">
+                                 <i class="fas fa-check me-2"></i>Yes, Submit
+                             </button>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+            <!-- Decision History -->
+            {% if deletion_request.status != 'pending' %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>Decision History
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Decision:</strong>
+                        {% if deletion_request.status == 'approved' %}
+                            <span class="badge bg-success">Approved</span>
+                        {% else %}
+                            <span class="badge bg-danger">Denied</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if deletion_request.reviewed_by %}
+                    <div class="mb-3">
+                        <strong>Reviewed by:</strong>
+                        <p class="mb-1">{{ deletion_request.reviewer.first_name }} {{ deletion_request.reviewer.last_name }}</p>
+                        <small class="text-muted">{{ deletion_request.reviewed_at.strftime('%B %d, %Y at %I:%M %p') }}</small>
+                    </div>
+                    {% endif %}
+                    
+                    {% if deletion_request.admin_notes %}
+                    <div class="mb-3">
+                        <strong>Admin Notes:</strong>
+                        <div class="alert alert-info">
+                            {{ deletion_request.admin_notes }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Warning Box -->
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Important Considerations
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-users text-danger me-2"></i>
+                            <strong>{{ deletion_request.course.enrollments|length }} students</strong> will be affected
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-file-alt text-danger me-2"></i>
+                            <strong>{{ deletion_request.course.assignments|length }} assignments</strong> will be lost
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-book text-danger me-2"></i>
+                            <strong>{{ deletion_request.course.materials|length }} study materials</strong> will be removed
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-bell text-danger me-2"></i>
+                            <strong>{{ deletion_request.course.announcements|length }} announcements</strong> will be deleted
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Debug JavaScript -->
+<script>
+console.log('=== ADMIN REVIEW PAGE LOADED ===');
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded for admin review page');
+    
+    const form = document.getElementById('adminReviewForm');
+    const decisionSelect = document.getElementById('decision');
+    const submitBtn = document.getElementById('submitDecisionBtn');
+    
+    console.log('Form elements found:', {
+        form: form,
+        decisionSelect: decisionSelect,
+        submitBtn: submitBtn
+    });
+    
+    if (form) {
+        console.log('✅ Form found, adding event listener...');
+        
+        form.addEventListener('submit', function(e) {
+            console.log('🚀 Form submit event triggered!');
+            e.preventDefault(); // Stop default behavior
+            
+            const decision = decisionSelect.value;
+            const notes = document.getElementById('admin_notes').value;
+            
+            console.log('📝 Decision:', decision);
+            console.log('📝 Notes:', notes);
+            
+            if (!decision) {
+                alert('❌ Please select a decision first!');
+                console.log('Form submission prevented - no decision selected');
+                return false;
+            }
+            
+            // Show beautiful Bootstrap modal instead of ugly browser confirm
+            document.getElementById('decisionText').textContent = decision;
+            document.getElementById('decisionDisplay').textContent = decision;
+            document.getElementById('notesDisplay').textContent = notes || 'No notes provided';
+            
+            // Show the modal
+            const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+            modal.show();
+            
+            console.log('✅ Modal shown, waiting for user confirmation...');
+        });
+        
+        console.log('✅ Form submit event listener added');
+    } else {
+        console.error('❌ Form not found!');
+    }
+    
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function(e) {
+            console.log('🖱️ Submit button clicked!');
+            console.log('Decision value:', decisionSelect ? decisionSelect.value : 'Select not found');
+            console.log('Form valid:', form ? form.checkValidity() : 'Form not found');
+        });
+        console.log('✅ Submit button click event listener added');
+    } else {
+        console.error('❌ Submit button not found!');
+    }
+    
+    // Test form submission
+    console.log('=== TESTING FORM ===');
+    console.log('Form checkValidity():', form ? form.checkValidity() : 'Form not found');
+    console.log('Decision required:', decisionSelect ? decisionSelect.hasAttribute('required') : 'Select not found');
+    
+         // Add event listener for the confirmation modal's submit button
+     const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
+     if (confirmSubmitBtn) {
+         confirmSubmitBtn.addEventListener('click', function() {
+             console.log('✅ User clicked "Yes, Submit" in modal');
+             
+             // Hide the modal
+             const modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
+             modal.hide();
+             
+             // Force form submission
+             console.log('🚀 Submitting form...');
+             
+             // Create a temporary submit button and click it
+             const tempSubmitBtn = document.createElement('button');
+             tempSubmitBtn.type = 'submit';
+             tempSubmitBtn.style.display = 'none';
+             form.appendChild(tempSubmitBtn);
+             tempSubmitBtn.click();
+             form.removeChild(tempSubmitBtn);
+             
+             console.log('✅ Form submission triggered!');
+         });
+         console.log('✅ Modal confirm button event listener added');
+     } else {
+         console.error('❌ Modal confirm button not found!');
+     }
+});
+
+console.log('✅ Admin review script loaded');
+</script>
+{% endblock %}

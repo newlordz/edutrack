@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Create Quiz - {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('course_detail', course_id=course.id) }}">{{ course.title }}</a></li>
+            <li class="breadcrumb-item active">Create Quiz</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-question-circle me-2"></i>Create New Quiz</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="mb-4">
+                            <label for="quiz_text" class="form-label fw-bold">
+                                <i class="fas fa-edit me-2"></i>Quiz Content
+                            </label>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Format:</strong> Enter your quiz in this simple format:
+                            </div>
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <strong>Example:</strong><br>
+                                <code>Quiz Title<br><br>
+                                Question 1?<br>
+                                A) Option A<br>
+                                B) Option B [CORRECT]<br>
+                                C) Option C<br>
+                                D) Option D</code>
+                            </div>
+                            <textarea class="form-control" id="quiz_text" name="quiz_text" rows="15" 
+                                placeholder="Basic Science Quiz
+
+What is the chemical symbol for the element gold?
+A) Au [CORRECT]
+B) Ag
+C) Gd
+D) Fe
+
+What is the process by which plants make their own food using sunlight?
+A) Respiration
+B) Transpiration
+C) Photosynthesis [CORRECT]
+D) Germination
+
+Which of the following is the largest organ in the human body?
+A) Heart
+B) Brain
+C) Liver
+D) Skin [CORRECT]
+
+How many planets are in our solar system?
+A) 7
+B) 8 [CORRECT]
+C) 9
+D) 10
+
+What force keeps the planets in orbit around the Sun?
+A) Magnetism
+B) Gravity [CORRECT]
+C) Centrifugal force
+D) Friction" required></textarea>
+                            <div class="form-text">
+                                <i class="fas fa-lightbulb me-1"></i>
+                                <strong>Instructions:</strong><br>
+                                • First line: Quiz title<br>
+                                • Questions: End with a question mark (?)<br>
+                                • Options: Start with A), B), C), D)<br>
+                                • <strong>Correct Answer:</strong> Add [CORRECT] after the correct option
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="time_limit" class="form-label fw-bold">
+                                    <i class="fas fa-clock me-2"></i>Time Limit (minutes)
+                                </label>
+                                <input type="number" class="form-control" id="time_limit" name="time_limit" 
+                                    value="30" min="5" max="180" required>
+                                <div class="form-text">How long students have to complete the quiz</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="passing_score" class="form-label fw-bold">
+                                    <i class="fas fa-percentage me-2"></i>Passing Score (%)
+                                </label>
+                                <input type="number" class="form-control" id="passing_score" name="passing_score" 
+                                    value="70" min="1" max="100" required>
+                                <div class="form-text">Minimum score to pass the quiz</div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary btn-lg px-4 py-2">
+                                <i class="fas fa-save me-2"></i>Create Quiz
+                            </button>
+                            <a href="{{ url_for('course_detail', course_id=course.id) }}" class="btn btn-secondary btn-lg px-4 py-2">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Quiz Creation Tips</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="text-primary"><i class="fas fa-check-circle me-2"></i>Best Practices</h6>
+                        <ul class="list-unstyled small">
+                            <li><i class="fas fa-arrow-right text-success me-2"></i>Keep questions clear and concise</li>
+                            <li><i class="fas fa-arrow-right text-success me-2"></i>Make all options plausible</li>
+                            <li><i class="fas fa-arrow-right text-success me-2"></i>Use consistent formatting</li>
+                            <li><i class="fas fa-arrow-right text-success me-2"></i>Mark correct answers with [CORRECT]</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-primary"><i class="fas fa-exclamation-triangle me-2"></i>Important Notes</h6>
+                        <ul class="list-unstyled small">
+                            <li><i class="fas fa-info-circle text-info me-2"></i>Mark correct answers with [CORRECT] after the option</li>
+                            <li><i class="fas fa-info-circle text-info me-2"></i>You can edit questions after creation</li>
+                            <li><i class="fas fa-info-circle text-info me-2"></i>Students can only take each quiz once</li>
+                        </ul>
+                    </div>
+
+                    <div class="alert alert-success small">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>New Feature:</strong> You can now specify correct answers directly in the quiz text using [CORRECT]!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card-header {
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+.btn-lg {
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.alert {
+    border-radius: 8px;
+    border: none;
+}
+
+code {
+    background-color: #f8f9fa;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+</style>
+{% endblock %}

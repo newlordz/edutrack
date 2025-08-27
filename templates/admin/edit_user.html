@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Edit User - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="mb-0">
+                    <i class="fas fa-user-edit me-2"></i>Edit User
+                </h1>
+                <a href="{{ url_for('manage_users') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Users
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Form -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>Edit User Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="first_name" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" 
+                                       value="{{ user.first_name }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="last_name" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" 
+                                       value="{{ user.last_name }}" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" 
+                                       value="{{ user.username }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ user.email }}" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="role" class="form-label">Role</label>
+                                <select class="form-select" id="role" name="role" required>
+                                    <option value="student" {{ 'selected' if user.role == 'student' }}>Student</option>
+                                    <option value="teacher" {{ 'selected' if user.role == 'teacher' }}>Teacher</option>
+                                    <option value="admin" {{ 'selected' if user.role == 'admin' }}>Admin</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" name="status">
+                                    <option value="active" {{ 'selected' if user.status == 'active' }}>Active</option>
+                                    <option value="inactive" {{ 'selected' if user.status == 'inactive' }}>Inactive</option>
+                                    <option value="suspended" {{ 'selected' if user.status == 'suspended' }}>Suspended</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="new_password" class="form-label">New Password (leave blank to keep current)</label>
+                            <input type="password" class="form-control" id="new_password" name="new_password" 
+                                   placeholder="Enter new password">
+                            <div class="form-text">Password must be at least 6 characters long</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" 
+                                   placeholder="Confirm new password">
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                            <a href="{{ url_for('manage_users') }}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Statistics -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>User Statistics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 class="text-primary">{{ user.enrollments|length }}</h4>
+                                <p class="text-muted mb-0">Enrolled Courses</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 class="text-success">{{ user.grades|length }}</h4>
+                                <p class="text-muted mb-0">Assignments Graded</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 class="text-warning">{{ user.submissions|length }}</h4>
+                                <p class="text-muted mb-0">Submissions Made</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h4 class="text-info">{{ user.study_progress|length }}</h4>
+                                <p class="text-muted mb-0">Study Sessions</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Password confirmation validation
+document.getElementById('confirm_password').addEventListener('input', function() {
+    const password = document.getElementById('new_password').value;
+    const confirm = this.value;
+    
+    if (password && confirm && password !== confirm) {
+        this.setCustomValidity('Passwords do not match');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+
+document.getElementById('new_password').addEventListener('input', function() {
+    const confirm = document.getElementById('confirm_password');
+    if (confirm.value) {
+        confirm.dispatchEvent(new Event('input'));
+    }
+});
+</script>
+{% endblock %}

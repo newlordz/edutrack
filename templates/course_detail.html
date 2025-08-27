@@ -50,14 +50,23 @@
                                     <a href="{{ url_for('manage_course', course_id=course.id) }}" class="btn btn-primary">
                                         <i class="fas fa-cog me-2"></i>Manage Course
                                     </a>
+                                    <a href="{{ url_for('manage_quizzes', course_id=course.id) }}" class="btn btn-info">
+                                        <i class="fas fa-chart-bar me-2"></i>Manage Quizzes
+                                    </a>
                                 {% else %}
                                     <a href="{{ url_for('teacher_dashboard') }}" class="btn btn-primary">
                                         <i class="fas fa-tachometer-alt me-2"></i>Teacher Dashboard
                                     </a>
                                 {% endif %}
-                                <a href="{{ url_for('create_course') }}" class="btn btn-outline-primary">
-                                    <i class="fas fa-plus me-2"></i>Create Course
-                                </a>
+                                {% if session.get('role') == 'admin' %}
+                                    <a href="{{ url_for('admin_create_course') }}" class="btn btn-outline-primary">
+                                        <i class="fas fa-plus me-2"></i>Create Course
+                                    </a>
+                                {% elif session.get('role') == 'teacher' %}
+                                    <a href="{{ url_for('teacher_create_course') }}" class="btn btn-outline-primary">
+                                        <i class="fas fa-plus me-2"></i>Create Course
+                                    </a>
+                                {% endif %}
                             </div>
                         {% elif enrolled %}
                             <div class="text-center mb-4">
@@ -79,9 +88,15 @@
                                 <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
                                     <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
                                 </a>
-                                <a href="{{ url_for('grades') }}" class="btn btn-outline-primary">
+                                <a href="{{ url_for('view_grades') }}" class="btn btn-outline-primary">
                                     <i class="fas fa-chart-line me-2"></i>View Grades
                                 </a>
+                                <button onclick="location.reload()" class="btn btn-outline-secondary">
+                                    <i class="fas fa-sync-alt me-2"></i>Refresh Page
+                                </button>
+                                <button onclick="checkEnrollmentStatus()" class="btn btn-outline-info">
+                                    <i class="fas fa-check-circle me-2"></i>Check Status
+                                </button>
                             </div>
                         {% else %}
                             {% if course.is_full() %}
@@ -107,7 +122,7 @@
                                 </div>
                                 
                                 <div class="d-grid">
-                                    <a href="{{ url_for('enroll', course_id=course.id) }}" class="btn btn-primary btn-lg">
+                                    <a href="{{ url_for('enroll_course', course_id=course.id) }}" class="btn btn-primary btn-lg">
                                         <i class="fas fa-plus me-2"></i>Enroll Now
                                     </a>
                                 </div>
@@ -197,6 +212,145 @@
                 </div>
             </div>
 
+            {% if enrolled and user.role == 'student' %}
+            <!-- Course Materials for Enrolled Students -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-book-open me-2"></i>Study Materials
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if materials %}
+                    <div class="materials-list">
+                        {% for material in materials %}
+                        <div class="material-item border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">{{ material.title }}</h6>
+                                    <p class="text-muted mb-2">{{ material.description[:150] }}{% if material.description|length > 150 %}...{% endif %}</p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>{{ material.uploaded_at.strftime('%B %d, %Y') }}
+                                        {% if material.file_type %}
+                                        <span class="ms-2">
+                                            <i class="fas fa-file me-1"></i>{{ material.file_type.upper() }}
+                                        </span>
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                <div class="ms-3">
+                                    <a href="{{ url_for('study_material', material_id=material.id) }}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-play me-1"></i>Study
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-book-open text-muted" style="font-size: 2rem;"></i>
+                        <h6 class="mt-2 text-muted">No materials available yet</h6>
+                        <p class="text-muted mb-0">Your instructor will upload study materials soon.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Course Assignments for Enrolled Students -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tasks me-2"></i>Assignments
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if assignments %}
+                    <div class="assignments-list">
+                        {% for assignment in assignments %}
+                        <div class="assignment-item border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">{{ assignment.title }}</h6>
+                                    <p class="text-muted mb-2">{{ assignment.description[:150] }}{% if assignment.description|length > 150 %}...{% endif %}</p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>Due: {{ assignment.due_date.strftime('%B %d, %Y at %I:%M %p') }}
+                                        <span class="ms-2">
+                                            <i class="fas fa-star me-1"></i>{{ assignment.max_score }} points
+                                        </span>
+                                    </small>
+                                </div>
+                                <div class="ms-3">
+                                    <a href="{{ url_for('submit_assignment', assignment_id=assignment.id) }}" class="btn btn-success btn-sm">
+                                        <i class="fas fa-upload me-1"></i>Submit
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-tasks text-muted" style="font-size: 2rem;"></i>
+                        <h6 class="mt-2 text-muted">No assignments yet</h6>
+                        <p class="text-muted mb-0">Your instructor will create assignments soon.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Course Quizzes for Enrolled Students -->
+            {% if enrolled %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-question-circle me-2"></i>Quizzes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% set quizzes = course.quizzes|selectattr('is_active', 'equalto', true)|list %}
+                    {% if quizzes %}
+                    <div class="quizzes-list">
+                        {% for quiz in quizzes %}
+                        <div class="quiz-item d-flex justify-content-between align-items-center p-2 border-bottom">
+                            <div class="quiz-info">
+                                <h6 class="mb-1">{{ quiz.title }}</h6>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>{{ quiz.time_limit_minutes }} min
+                                    <i class="fas fa-percentage ms-2 me-1"></i>{{ quiz.passing_score }}% to pass
+                                </small>
+                            </div>
+                            <div class="quiz-actions">
+                                {% set has_attempted = false %}
+                                {% for attempt in quiz.attempts %}
+                                    {% if attempt.user_id == session.user_id %}
+                                        {% set has_attempted = true %}
+                                        <a href="{{ url_for('quiz_results', attempt_id=attempt.id) }}" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye me-1"></i>View Results
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if not has_attempted %}
+                                <a href="{{ url_for('take_quiz', quiz_id=quiz.id) }}" class="btn btn-success btn-sm">
+                                    <i class="fas fa-play me-1"></i>Take Quiz
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-question-circle text-muted" style="font-size: 2rem;"></i>
+                        <h6 class="mt-2 text-muted">No quizzes yet</h6>
+                        <p class="text-muted mb-0">Your instructor will create quizzes soon.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-transparent border-0">
                     <h5 class="mb-0">
@@ -254,4 +408,127 @@
         </div>
     </div>
 </div>
+
+<script>
+// Check if user just enrolled (check for success flash message)
+document.addEventListener('DOMContentLoaded', function() {
+    // Look for success message about enrollment
+    const successMessages = document.querySelectorAll('.alert-success');
+    successMessages.forEach(function(message) {
+        if (message.textContent.includes('Successfully enrolled')) {
+            // Show a notification instead of auto-refreshing
+            showNotification('Enrollment successful! The page will refresh in 10 seconds to show your enrolled status. You can also refresh manually anytime.', 'success');
+            
+            // Only auto-refresh after 10 seconds if user hasn't interacted
+            let userInteracted = false;
+            
+            // Track user interactions
+            document.addEventListener('click', function() { userInteracted = true; });
+            document.addEventListener('scroll', function() { userInteracted = true; });
+            document.addEventListener('keydown', function() { userInteracted = true; });
+            
+                // Auto-refresh after 60 seconds only if user hasn't interacted (much longer delay)
+    setTimeout(function() {
+        if (!userInteracted) {
+            showNotification('Refreshing page to update enrollment status...', 'info');
+            setTimeout(() => location.reload(), 1000);
+        }
+    }, 60000); // 60 seconds instead of 10
+        }
+    });
+    
+    // Also check URL parameters for enrollment success
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('enrolled') === 'success') {
+        // Show notification instead of immediate refresh
+        showNotification('Enrollment detected! The page will refresh in 60 seconds to show your enrolled status. You can also refresh manually anytime.', 'success');
+        
+        // Only refresh if user hasn't interacted
+        let userInteracted = false;
+        
+        // Track user interactions
+        document.addEventListener('click', function() { userInteracted = true; });
+        document.addEventListener('scroll', function() { userInteracted = true; });
+        document.addEventListener('keydown', function() { userInteracted = true; });
+        
+        // Auto-refresh after 60 seconds only if user hasn't interacted (much longer delay)
+        setTimeout(function() {
+            if (!userInteracted) {
+                showNotification('Refreshing page to update enrollment status...', 'info');
+                setTimeout(() => location.reload(), 1000);
+            }
+        }, 60000); // 60 seconds instead of 8
+    }
+    
+    // DISABLE AUTO-REFRESH if user is viewing study materials
+    // Check if we're on a study material page
+    if (window.location.pathname.includes('/study-material/')) {
+        // Disable all auto-refresh on study material pages
+        console.log('Study material page detected - auto-refresh disabled');
+        return;
+    }
+});
+
+// Function to check enrollment status without refreshing the page
+function checkEnrollmentStatus() {
+    // Show loading state
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Checking...';
+    button.disabled = true;
+    
+    // Make an AJAX request to check enrollment status
+    fetch(window.location.href)
+        .then(response => response.text())
+        .then(html => {
+            // Parse the HTML to check if enrollment status changed
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Check if user is now enrolled
+            const enrolledSection = doc.querySelector('.enrollment-card .text-center .text-success');
+            
+            if (enrolledSection && enrolledSection.textContent.includes("You're Enrolled!")) {
+                // Show success message
+                showNotification('Enrollment confirmed! You are now enrolled in this course.', 'success');
+                // Reload the page to show enrolled status
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                // Show info message
+                showNotification('Enrollment status checked. You are not enrolled yet.', 'info');
+            }
+        })
+        .catch(error => {
+            showNotification('Error checking enrollment status. Please refresh the page manually.', 'error');
+        })
+        .finally(() => {
+            // Restore button state
+            button.innerHTML = originalText;
+            button.disabled = false;
+        });
+}
+
+// Function to show notifications
+function showNotification(message, type) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+</script>
+
 {% endblock %}
