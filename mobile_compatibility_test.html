@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Compatibility Test - EduTrack</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .device-frame {
+            border: 2px solid #333;
+            border-radius: 10px;
+            margin: 20px;
+            display: inline-block;
+            background: white;
+        }
+        .mobile-frame {
+            width: 375px;
+            height: 667px;
+        }
+        .tablet-frame {
+            width: 768px;
+            height: 1024px;
+        }
+        .desktop-frame {
+            width: 1200px;
+            height: 800px;
+        }
+        .frame-content {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            padding: 10px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .issue-highlight {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success-highlight {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <h1 class="text-center my-4">
+            <i class="fas fa-mobile-alt text-primary me-3"></i>
+            EduTrack Mobile Compatibility Test
+        </h1>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-info-circle me-2"></i>Mobile Compatibility Analysis</h5>
+                    <p>This page tests the responsive design of EduTrack across different device sizes.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Device Frames -->
+        <div class="text-center">
+            <h3>Device Preview Frames</h3>
+            <div class="device-frame mobile-frame">
+                <div class="frame-content">
+                    <h6>📱 Mobile (375x667)</h6>
+                    <div class="test-section">
+                        <h6>Navigation Test</h6>
+                        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                            <div class="container-fluid">
+                                <a class="navbar-brand" href="#">EduTrack</a>
+                                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#testNav">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
+                                <div class="collapse navbar-collapse" id="testNav">
+                                    <ul class="navbar-nav">
+                                        <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="#">Courses</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
+                    
+                    <div class="test-section">
+                        <h6>Grid System Test</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>Card 1</h6>
+                                        <small>This should stack on mobile</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>Card 2</h6>
+                                        <small>This should stack on mobile</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="device-frame tablet-frame">
+                <div class="frame-content">
+                    <h6>📱 Tablet (768x1024)</h6>
+                    <div class="test-section">
+                        <h6>Tablet Layout Test</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>Left Column</h6>
+                                        <p>Should show side by side on tablet</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>Right Column</h6>
+                                        <p>Should show side by side on tablet</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="device-frame desktop-frame">
+                <div class="frame-content">
+                    <h6>💻 Desktop (1200x800)</h6>
+                    <div class="test-section">
+                        <h6>Desktop Layout Test</h6>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>Sidebar</h6>
+                                        <p>Should show as sidebar</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>Main Content</h6>
+                                        <p>Should show as main content area</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compatibility Analysis -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3><i class="fas fa-check-circle text-success me-2"></i>Mobile Compatibility Analysis</h3>
+                
+                <div class="success-highlight">
+                    <h6><i class="fas fa-check me-2"></i>✅ What's Working Well:</h6>
+                    <ul>
+                        <li><strong>Bootstrap 5.3.0</strong> - Modern responsive framework</li>
+                        <li><strong>Proper Viewport Meta</strong> - Mobile-first approach</li>
+                        <li><strong>Responsive Navigation</strong> - Collapsible hamburger menu</li>
+                        <li><strong>Grid System</strong> - Bootstrap's responsive columns</li>
+                        <li><strong>Mobile-First CSS</strong> - Progressive enhancement</li>
+                        <li><strong>Touch-Friendly</strong> - Proper button sizes and spacing</li>
+                    </ul>
+                </div>
+
+                <div class="issue-highlight">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>⚠️ Potential Issues to Address:</h6>
+                    <ul>
+                        <li><strong>Fixed Navigation</strong> - May overlap content on small screens</li>
+                        <li><strong>Complex Tables</strong> - Some tables might not scroll horizontally on mobile</li>
+                        <li><strong>Calendar Widget</strong> - Interactive calendar might be cramped on mobile</li>
+                        <li><strong>Form Elements</strong> - Some forms might need mobile-specific styling</li>
+                        <li><strong>Modal Dialogs</strong> - Need to ensure they're mobile-friendly</li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h6><i class="fas fa-lightbulb me-2"></i>Recommendations for Better Mobile Experience:</h6>
+                    <ol>
+                        <li><strong>Test on Real Devices</strong> - Use actual mobile devices for testing</li>
+                        <li><strong>Touch Targets</strong> - Ensure buttons are at least 44x44px</li>
+                        <li><strong>Font Sizes</strong> - Use minimum 16px for body text on mobile</li>
+                        <li><strong>Spacing</strong> - Increase padding/margins on mobile for better touch interaction</li>
+                        <li><strong>Images</strong> - Ensure images are responsive and don't overflow</li>
+                        <li><strong>Forms</strong> - Use mobile-optimized input types and validation</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Test Links -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <h4>Quick Mobile Tests:</h4>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="http://localhost:5001" class="btn btn-primary" target="_blank">
+                        <i class="fas fa-home me-2"></i>Test Homepage
+                    </a>
+                    <a href="http://localhost:5001/settings" class="btn btn-info" target="_blank">
+                        <i class="fas fa-cog me-2"></i>Test Settings
+                    </a>
+                    <a href="http://localhost:5001/schedule" class="btn btn-success" target="_blank">
+                        <i class="fas fa-calendar me-2"></i>Test Schedule
+                    </a>
+                    <a href="http://localhost:5001/certificates" class="btn btn-warning" target="_blank">
+                        <i class="fas fa-certificate me-2"></i>Test Certificates
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
